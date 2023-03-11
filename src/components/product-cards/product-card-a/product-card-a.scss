@@ -1,0 +1,29 @@
+.product_card_a {
+    width: 200px;
+    height: 200px;
+    border-radius: 10px;
+    border: 1px solid var(--primary-color);
+
+    .product {
+        width: 100%;
+        height: 100%;
+
+        .badge {
+
+        }
+    
+        .image_wrapper {
+            width: 60%;
+            height: 60%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+    
+            .product_image {
+                max-width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+        }
+    }
+}

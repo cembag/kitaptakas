@@ -1,0 +1,42 @@
+export type BookTypes = typeof bookTypes[number]
+
+const bookTypes = <const> [
+    "Autobiography", 
+    "Biography", 
+    "Business", 
+    "Documentary", 
+    "Environmental",
+    "Health and Wellness",
+    "History",
+    "Journals",
+    "Philosophy",
+    "Politics",
+    "Scientific",
+    "Self Improvement",
+    "Spiritual",
+    "Sports",
+    "Travel",
+    "Detective",
+    "Children",
+    "Crime",
+    "Drama",
+    "Fantasy",
+    "Historical Fiction",
+    "Horror",
+    "Humor",
+    "Mystery",
+    "Paranormal",
+    "Parody",
+    "Romance",
+    "Science Fiction",
+    "Thriller",
+    "Western",
+    "Cook",
+    "Poetry",
+    "Short Stories",
+    "War",
+    "Classics",
+    "Joke"
+]
+
+export default bookTypes
