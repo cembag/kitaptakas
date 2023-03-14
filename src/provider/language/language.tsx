@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
+import { LanguageType } from "../../context/language/supported.languages"
 import ILanguage from "../../models/language"
 import { ChangeLanguageAction } from "./actions-language"
 import initialStateLanguage from "./initial-state-language"
@@ -8,7 +9,7 @@ export const language = createSlice({
     name: "theme",
     initialState: initialStateLanguage,
     reducers: {
-        changeLanguage: (state: ILanguage, action:ChangeLanguageAction) => {
+        changeLanguage: (state: LanguageType, action: ChangeLanguageAction) => {
             return state = action.payload
         }
     }

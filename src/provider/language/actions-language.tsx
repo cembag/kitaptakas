@@ -1,6 +1,6 @@
 import { PayloadAction } from "@reduxjs/toolkit"
-import ILanguage from "../../models/language"
+import { LanguageType } from "../../context/language/supported.languages"
 
-type ChangeLanguagePayload = ILanguage
+type ChangeLanguagePayload = LanguageType
 
 export type ChangeLanguageAction = PayloadAction<ChangeLanguagePayload>

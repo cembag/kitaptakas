@@ -1,0 +1,24 @@
+#scroll-element {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: transparent;
+    padding: 10px;
+    position: fixed;
+    z-index: 10;
+    border: 1px solid rgb(230,230,230);
+    background: white;
+    transition: all .3s ease;
+    color: var(--theme-color);
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(var(--theme-color-rgb), .95);
+        color: var(--brand-color);
+    }
+
+    .scroll-icon {
+        width: 100%;
+        height: 100%;
+    }
+}

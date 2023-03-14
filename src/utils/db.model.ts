@@ -2,12 +2,12 @@ import firebase from "firebase"
 import IError from "../models/error"
 import IUser from "../models/user"
 import IBook from "../models/book"
-import { db } from "../config/firebase"
 import ITrade from "../models/trade"
+import { db } from "../config/firebase"
 
 const converter = <T>() => ({
     toFirestore: (data: T) => data,
-    fromFirestore: (snap: firebase.firestore.QueryDocumentSnapshot) => snap.data() as T
+    fromFirestore: (snap: firebase.firestore.QueryDocumentSnapshot) => Object.assign({id: snap.id}, snap.data()) as T
 })
 
 const dataPoint = <T extends firebase.firestore.DocumentData>(collectionPath: string) => db.collection(collectionPath).withConverter(converter<T>())

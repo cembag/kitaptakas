@@ -4,9 +4,11 @@ import IBook from "../../models/book";
 import dbModel from "../../utils/db.model";
 import IBookDal from "../book.dal";
 
-type Custom = {
+export type Custom = {
     startAfter?: firebase.firestore.QueryDocumentSnapshot<IBook>,
-    books: IBook[]
+    books: IBook[],
+    fetching: boolean,
+    fetched: boolean,
 }
 
 export default class BookDal implements IBookDal {
@@ -32,16 +34,22 @@ export default class BookDal implements IBookDal {
             this.getCustom(querySnapshot, custom)
         }
 
+        custom.fetching = false
+
         return custom
     }
 
     private getCustom(snapshot: firebase.firestore.QuerySnapshot<IBook>, custom: Custom): Custom {
+        if(snapshot.docs.length < this.limit) {
+            custom.fetched = true
+        }
+
         snapshot.docs.forEach((book, index) => {
             if((index + 1) === this.limit) {
                 custom.startAfter = book
             }
 
-            custom.books.push(book.data() as IBook)
+            custom.books.push(book.data())
         })
         return custom
     }

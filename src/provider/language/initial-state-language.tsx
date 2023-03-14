@@ -1,9 +1,8 @@
-import ILanguage, {LanguageType} from "../../models/language";
+import { LanguageType } from "../../context/language/supported.languages"
 
-
-function getBrowserLanguage(): keyof LanguageType {
-    let language: keyof LanguageType = "en"
-    const browserLanguage = navigator.language.split("-")[0] as keyof LanguageType
+function getBrowserLanguage(): LanguageType {
+    let language: LanguageType = "en"
+    const browserLanguage = navigator.language.split("-")[0] as LanguageType
     if(typeof browserLanguage === typeof language) {
         language = browserLanguage
     }
@@ -11,8 +10,5 @@ function getBrowserLanguage(): keyof LanguageType {
     return language
 }
 
-const initialStateLanguage: ILanguage = {
-    language: getBrowserLanguage()
-}
-
+const initialStateLanguage: LanguageType = getBrowserLanguage()
 export default initialStateLanguage

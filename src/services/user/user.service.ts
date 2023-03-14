@@ -7,7 +7,7 @@ export default class UserService implements IUserService {
         return users.sort((a, b) => a.age - b.age)
     }
 
-    public filterUsers(users: IUser[]) {
-        return users.filter((user) => user.has_premium)
-    }
+    // public filterUsers(users: IUser[]) {
+    //     return users.filter((user) => user.has_premium)
+    // }
 }

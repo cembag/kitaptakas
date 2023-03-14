@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import themeReducer from './theme/theme'
 import languageReducer from './language/language'
 import userReducer from "./user/user"
+import modalsReducer from './modals/modals.reducer';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 
@@ -9,7 +10,8 @@ const store = configureStore({
     reducer: {
         theme: themeReducer,
         language: languageReducer,
-        user: userReducer
+        user: userReducer,
+        modals: modalsReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false

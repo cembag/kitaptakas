@@ -2,9 +2,27 @@ import firebase from "firebase"
 import { BookTypes } from "../context/book/book.types"
 
 // export type BookStatus = ""
-export type BookCondition = "Good" | "Worn" | "Damaged"
-export type BookLegibility = "Legible" | "Hard to read" | "Unreadable"
-export type BookLanguage = "Tr" | "En" | "Others"
+export type BookCondition = typeof BookConditions[number]
+export type BookLegibility = typeof BookLegibilitys[number]
+export type BookLanguage = typeof BookLanguages[number]
+
+export const BookLanguages = [
+    "Tr",
+    "En",
+    "Others"
+] as const
+
+export const BookConditions = [
+    "Good",
+    "Worn",
+    "Damaged"
+] as const
+
+export const BookLegibilitys = [
+    "Legible",
+    "Hard to read",
+    "Unreadable"
+] as const
 
 export default interface IBook {
     id: string
