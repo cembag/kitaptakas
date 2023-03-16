@@ -1,0 +1,12 @@
+.snackbar {
+    position: fixed;
+    width: 200px;
+    height: 50px;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 7px;
+    overflow: hidden;
+    transition: right .3s ease, opacity .3s ease;
+    z-index: 1001;
+}

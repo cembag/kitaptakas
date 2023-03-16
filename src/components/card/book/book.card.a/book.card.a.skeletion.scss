@@ -1,0 +1,87 @@
+.card-skeletion {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    
+    .card-skeletion-container {
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        overflow: hidden;
+        display: flex;
+        position: relative;
+        align-items: center;
+        flex-direction: column;
+        
+        .skeletion-image-container {
+            width: 100%;
+            aspect-ratio: 1;
+            padding: 15px;
+         
+            .skeletion-image {
+                width: 100%;
+                height: 100%;
+                border-radius: 10px;
+                background: rgb(230,230,230);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                
+                .icon {
+                    width: 30px;
+                    height: 30px;
+                    color: rgb(200, 200, 200);
+                    animation: anim 1s ease infinite;
+                }
+            }
+        }
+        
+        .skeletion-attributes {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            padding: 15px;
+            padding-top: 0px;
+            flex: 1;
+            min-height: 125px;
+            line-height: 18px;
+        
+            .skeletion-title {
+                width: 100%;
+                height: 20px;
+                border-radius: 5px;
+                background: rgb(230,230,230);
+            }
+            
+            .skeletion-author {
+                width: 100%;
+                height: 15px;
+                border-radius: 5px;
+                background: rgb(230,230,230);
+                margin-top: 5px;
+            }
+            
+            .skeletion-button {
+                width: 100%;
+                height: 35px;
+                border-radius: 7px;
+                background: rgb(230,230,230);
+                overflow: hidden;
+                position: relative;
+            }
+        }
+    }
+}
+
+@keyframes anim {
+    0% {
+        scale: 1;
+    } 40% {
+        scale: .85;
+    } 80% {
+        scale: 1.05;
+    } 100% {
+        scale: 1;
+    }
+}
