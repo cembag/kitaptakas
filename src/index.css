@@ -50,6 +50,9 @@ html, body, #root {
 }
 
 :root {
+  /* --theme-color:blue;
+  --theme-color-rgb: 0, 0, 200;
+  --theme-hover-color:  blue; */
   /* --theme-color:rgb(114, 120, 94);
   --theme-color-rgb: 114, 120, 94;
   --theme-hover-color:  rgb(94, 100, 74); */

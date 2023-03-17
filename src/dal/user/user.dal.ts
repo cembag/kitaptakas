@@ -23,4 +23,5 @@ export default class UserDal implements IUserDal {
     public async deleteUser(id: string) {
         await dbModel.users.doc(id).delete()
     }
+    
 }

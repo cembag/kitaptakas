@@ -13,14 +13,9 @@ import { BsCheck, BsFillTrashFill } from "react-icons/bs"
 import { TiWarning } from "react-icons/ti"
 import { RiQuestionFill } from "react-icons/ri"
 import BookCardASkeletion from "../../components/card/book/book.card.a/book.card.a.skeletion"
-
-
-type FilterFor = typeof localFor[number]
-
-const localFor = [
-    "book",
-    "author"
-] as const
+import { useTypedSelector } from "../../provider/store"
+import { FilterState } from "../../context/book/book.filter"
+import bookWords from "../../context/book/book.words"
 
 const numberOfPageOptions: Array<[string, string]> = [
     ["0", "100"],
@@ -58,27 +53,13 @@ const questions: Array<string> = [
     "Kargo ücreti var mı?",
     "Teslimat süresi nedir?",
     "Kitap takas işlemi güvenli mi?",
-] 
-
-type FilterState = {
-    local: {
-        for: FilterFor,
-        title: string,
-    },
-    client: {
-        type: BookTypes[],
-        condition: BookCondition[],
-        legibility: BookLegibility[],
-        number_of_pages?: number,
-        has_missing_page?: boolean
-    }
-}
+]
 
 export default function FilterBook(): JSX.Element {
 
     const { value, toggle } = useToggle()
     const bookDal = new BookDal()
-    
+
     const filtersInitialState: FilterState = {
         local: {
             for: "book",
@@ -86,13 +67,18 @@ export default function FilterBook(): JSX.Element {
         },
         client: {
             type: [],
-            condition: [],
-            legibility: [],
+            condition: "Good",
+            legibility: "Legible",
             has_missing_page: false,
+            number_of_pages: {
+                min: "",
+                max: ""
+            }
         }
     }
     const bookFetchingInitialState: Custom = {
         startAfter: undefined,
+        filter: filtersInitialState,
         books: [],
         fetching: false,
         fetched: false
@@ -104,10 +90,11 @@ export default function FilterBook(): JSX.Element {
     const [category, setCategory] = useState<string>("")
     const [min, setMin] = useState<string>("")
     const [max, setMax] = useState<string>("")
-    
-    // const [book, setBook] = useState<string>("")
+
+    const [book, setBook] = useState<string>("")
     // const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false)
-    
+
+    const { user, language } = useTypedSelector(state => state)
 
     useEffect(() => {
 
@@ -120,6 +107,12 @@ export default function FilterBook(): JSX.Element {
         getBooks()
 
     }, [value])
+
+    useEffect(() => {
+
+        setBookFetchingState(prev => ({ ...prev, filter: filters, startAfter: undefined, fetching: false, fetched: false}))
+
+    }, [filters.client.condition, filters.client.has_missing_page, filters.client.legibility, filters.client.number_of_pages?.max, filters.client.number_of_pages?.min, filters.client.type.length])
 
     return (
         <div id="filter-book" className="page">
@@ -153,84 +146,59 @@ export default function FilterBook(): JSX.Element {
                         <nav className="noselect">
                             <div id="filters" className="nav-item">
                                 <div className="categories option-wrapper">
-                                    <h2>Categories</h2>
+                                    <h2 onClick={() => {
+                                        toggle()
+                                        setBookFetchingState(prev => {
+                                            if(!prev.startAfter) {
+                                                return ({...prev, books: []})   
+                                            } else {
+                                                return prev
+                                            }
+                                        })
+                                    }}>Categories</h2>
                                     <header>
-                                        <InputA placeHolder="Category" value={category} setState={setCategory} small={true} type={"search"}/>
+                                        <InputA placeHolder="Category" value={category} setState={setCategory} small={true} type={"search"} />
                                         <div className="space"></div>
-                                        
-                                        <div className="delete" onClick={() => setFilters(prev => ({...prev, client: {...prev.client, type: []}}))}>
-                                            <BsFillTrashFill className="icon"/> 
+
+                                        <div className="delete" onClick={() => setFilters(prev => ({ ...prev, client: { ...prev.client, type: [] } }))}>
+                                            <BsFillTrashFill className="icon" />
                                         </div>
                                     </header>
                                     <div className="categories-container option-container with-scroll">
-                                    
-                                        <div className="option" onClick={() => {
-                                            if(filters.client.type.length === bookTypes.length) {
-                                                setFilters(prev => ({...prev, client: {...prev.client, type: []}}))
-                                            } else {
-                                                setFilters(prev => ({...prev, client: {...prev.client, type: [...bookTypes]}}))
-                                            }
-                                        }}>
-                                            <div className="checkbox" style={{ background: filters.client.type.length === bookTypes.length ? "var(--theme-color)" : "white", border: filters.client.type.length === bookTypes.length ? "2px solid var(--theme-color)" : "2px solid var(--border-color)" }}>
-                                                <BsCheck className="checkbox-icon" />
-                                            </div>
-                                            <span>All</span>
-                                        </div>
-                                        
+
                                         {
                                             bookTypes.map((bookType, index) => {
                                                 return (
-                                                    <div key={index} className="option" style={{display: bookType.toLowerCase().includes(category.toLowerCase()) ? "flex" : "none"}} onClick={() => setFilters(prev => {
+                                                    <div key={index} className="option" style={{ display: bookType.toLowerCase().includes(category.toLowerCase()) ? "flex" : "none" }} onClick={() => setFilters(prev => {
                                                         let books: BookTypes[] = prev.client.type
-                                                        if(prev.client.type.includes(bookType)) {
+                                                        if (books.includes(bookType)) {
                                                             const index = books.indexOf(bookType, 0);
                                                             books.splice(index, 1)
                                                         } else {
-                                                            books.push(bookType)
+                                                            if (books.length < 10) {
+                                                                books.push(bookType)
+                                                            }
                                                         }
-                                                        return {...prev, client: {...prev.client, type: books}}
+                                                        return { ...prev, client: { ...prev.client, type: books } }
                                                     })}>
                                                         <div className="checkbox" style={{ background: filters.client.type.includes(bookType) ? "var(--theme-color)" : "white", border: filters.client.type.includes(bookType) ? "2px solid var(--theme-color)" : "2px solid var(--border-color)" }}>
                                                             <BsCheck className="checkbox-icon" />
                                                         </div>
-                                                        <span>{bookType}</span>
+                                                        <span>{bookWords[language][bookType]}</span>
                                                     </div>
                                                 )
-                                            })   
+                                            })
                                         }
                                     </div>
                                 </div>
                                 <div className="conditions option-wrapper">
                                     <h2>Condition</h2>
                                     <div className="conditions-container option-container">
-                                          
-                                        <div className="option" onClick={() => {
-                                            if(filters.client.condition.length === BookConditions.length) {
-                                                setFilters(prev => ({...prev, client: {...prev.client, condition: []}}))
-                                            } else {
-                                                setFilters(prev => ({...prev, client: {...prev.client, condition: [...BookConditions]}}))
-                                            }
-                                        }}>
-                                            <div className="checkbox" style={{ background: filters.client.condition.length === BookConditions.length ? "var(--theme-color)" : "white", border: filters.client.condition.length === BookConditions.length ? "2px solid var(--theme-color)" : "2px solid var(--border-color)" }}>
-                                                <BsCheck className="checkbox-icon" />
-                                            </div>
-                                            <span>All</span>
-                                        </div>
-                                        
-                                    
+
                                         {
                                             BookConditions.map((bookCondition, index) => {
                                                 return (
-                                                    <div key={index} className="option" onClick={() => setFilters(prev => {
-                                                        let conditions: BookCondition[] = prev.client.condition
-                                                        if(prev.client.condition.includes(bookCondition)) {
-                                                            const index = conditions.indexOf(bookCondition, 0);
-                                                            conditions.splice(index, 1)
-                                                        } else {
-                                                            conditions.push(bookCondition)
-                                                        }
-                                                        return {...prev, client: {...prev.client, condition: conditions}}
-                                                    })}>
+                                                    <div key={index} className="option" onClick={() => setFilters(prev => ({ ...prev, client: { ...prev.client, condition: bookCondition } }))}>
                                                         <div className="checkbox" style={{ background: filters.client.condition.includes(bookCondition) ? "var(--theme-color)" : "white", border: filters.client.condition.includes(bookCondition) ? "2px solid var(--theme-color)" : "2px solid var(--border-color)" }}>
                                                             <BsCheck className="checkbox-icon" />
                                                         </div>
@@ -244,33 +212,11 @@ export default function FilterBook(): JSX.Element {
                                 <div className="legibilities option-wrapper">
                                     <h2>Legibility</h2>
                                     <div className="legibilities-container option-container">
-                                    
-                                        <div className="option" onClick={() => {
-                                            if(filters.client.legibility.length === BookLegibilites.length) {
-                                                setFilters(prev => ({...prev, client: {...prev.client, legibility: []}}))
-                                            } else {
-                                                setFilters(prev => ({...prev, client: {...prev.client, legibility: [...BookLegibilites]}}))
-                                            }
-                                        }}>
-                                            <div className="checkbox" style={{ background: filters.client.legibility.length === BookLegibilites.length ? "var(--theme-color)" : "white", border: filters.client.legibility.length === BookLegibilites.length ? "2px solid var(--theme-color)" : "2px solid var(--border-color)" }}>
-                                                <BsCheck className="checkbox-icon" />
-                                            </div>
-                                            <span>All</span>
-                                        </div>
-                                    
+
                                         {
                                             BookLegibilites.map((bookLegibility, index) => {
                                                 return (
-                                                    <div key={index} className="option" onClick={() => setFilters(prev => {
-                                                        let legibilities: BookLegibility[] = prev.client.legibility
-                                                        if(prev.client.legibility.includes(bookLegibility)) {
-                                                            const index = legibilities.indexOf(bookLegibility, 0);
-                                                            legibilities.splice(index, 1)
-                                                        } else {
-                                                            legibilities.push(bookLegibility)
-                                                        }
-                                                        return {...prev, client: {...prev.client, legibility: legibilities}}
-                                                    })}>
+                                                    <div key={index} className="option" onClick={() => setFilters(prev => ({ ...prev, client: { ...prev.client, legibility: bookLegibility } }))}>
                                                         <div className="checkbox" style={{ background: filters.client.legibility.includes(bookLegibility) ? "var(--theme-color)" : "white", border: filters.client.legibility.includes(bookLegibility) ? "2px solid var(--theme-color)" : "2px solid var(--border-color)" }}>
                                                             <BsCheck className="checkbox-icon" />
                                                         </div>
@@ -284,26 +230,33 @@ export default function FilterBook(): JSX.Element {
                                 <div className="page-number option-wrapper">
                                     <h2>Number of pages</h2>
                                     <header>
-                                        <InputA placeHolder="Min" value={min} setState={setMin} small={true} type={"number"}/>
+                                        <InputA placeHolder="Min" value={min} setState={setMin} small={true} type={"number"} />
                                         <div className="seperator"></div>
-                                        <InputA placeHolder="Max" value={max} setState={setMax} small={true} type={"number"}/>
+                                        <InputA placeHolder="Max" value={max} setState={setMax} small={true} type={"number"} />
                                         <div className="delete" onClick={() => {
                                             setMin("")
                                             setMax("")
+                                            setFilters(prev => ({
+                                                ...prev, client: { ...prev.client, number_of_pages: { min: "", max: "" } }
+                                            }))
                                         }}>
-                                            <BsFillTrashFill className="icon"/> 
+                                            <BsFillTrashFill className="icon" />
                                         </div>
                                     </header>
                                     <div className="page-number-container option-container with-scroll">
                                         {
                                             numberOfPageOptions.map((numberOfPageOption, index): JSX.Element => {
-                                            
+
                                                 const isSelected = min === numberOfPageOption[0] && max === numberOfPageOption[1]
-                                            
+
                                                 return (
                                                     <div key={index} className="option" onClick={() => {
                                                         setMin(numberOfPageOption[0])
                                                         setMax(numberOfPageOption[1])
+
+                                                        setFilters(prev => ({
+                                                            ...prev, client: { ...prev.client, number_of_pages: { min: numberOfPageOption[0], max: numberOfPageOption[1] } }
+                                                        }))
                                                     }}>
                                                         <div className="checkbox" style={{ background: isSelected ? "var(--theme-color)" : "white", border: isSelected ? "2px solid var(--theme-color)" : "2px solid var(--border-color)" }}>
                                                             <BsCheck className="checkbox-icon" />
@@ -317,19 +270,19 @@ export default function FilterBook(): JSX.Element {
                                 </div>
                                 <div className="has-missing-page option-wrapper">
                                     <h2>Missing page</h2>
-                                    <header onClick={() => setFilters(prev => ({...prev, client: {...prev.client, has_missing_page: !prev.client.has_missing_page}}))}>
+                                    <header onClick={() => setFilters(prev => ({ ...prev, client: { ...prev.client, has_missing_page: !prev.client.has_missing_page } }))}>
                                         <div className="checkbox">
-                                            <div className="circle" style={{scale: filters.client.has_missing_page ? "1" : "0"}}/>
+                                            <div className="circle" style={{ scale: filters.client.has_missing_page ? "1" : "0" }} />
                                         </div>
                                         <span>Show books with missing pages</span>
                                     </header>
                                     <div className="warning">
-                                        <TiWarning className="icon"/>
+                                        <TiWarning className="icon" />
                                         <span>When you activate this option, you will also see the books with missing pages.</span>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div id="sss" className="nav-item">
                                 <h2>SSS</h2>
                                 <a href="" className="questions">
@@ -337,7 +290,7 @@ export default function FilterBook(): JSX.Element {
                                         questions.map((question, index): JSX.Element => {
                                             return (
                                                 <div key={index} className="question">
-                                                    <RiQuestionFill className="icon"/>
+                                                    <RiQuestionFill className="icon" />
                                                     <span>{question}</span>
                                                 </div>
                                             )
@@ -345,62 +298,74 @@ export default function FilterBook(): JSX.Element {
                                     }
                                 </a>
                             </div>
-                            
-                            
+
+
                         </nav>
-                        <div className="books">
-                            <div className="books-wrapper">
-                                <div className="books-container">
-                                    {
-                                        bookFetchingState.books.length > 0 && bookFetchingState.books.map(book => {
-                                            return (
-                                                <BookCardA book={book} />
+
+                        <div className="right">
+                            <InputA placeHolder="Kitap ismi" value={book} setState={setBook} type={"search"}/>
+                            
+                            <div className="books">
+                                <div className="books-wrapper">
+                                    <div className="books-container">
+                                        {
+                                            bookFetchingState.books.length > 0 && bookFetchingState.books.map(book => {
+
+                                                let isFavourite: boolean = false
+
+                                                if (user && user.favourites && user.favourites.length > 0 && user.favourites.includes(book.id)) {
+                                                    isFavourite = true
+                                                }
+
+                                                return (
+                                                    <BookCardA book={book} isFavourite={isFavourite} />
+                                                )
+                                            })
+                                        }
+
+                                        {
+                                            bookFetchingState.fetching && (
+                                                <>
+                                                    <BookCardASkeletion />
+                                                    <BookCardASkeletion />
+                                                    <BookCardASkeletion />
+                                                    <BookCardASkeletion />
+                                                    <BookCardASkeletion />
+                                                    <BookCardASkeletion />
+                                                    <BookCardASkeletion />
+                                                    <BookCardASkeletion />
+                                                    <BookCardASkeletion />
+                                                    <BookCardASkeletion />
+                                                </>
                                             )
-                                        })
-                                    }
-                                      
-                                    {
-                                        bookFetchingState.fetching && (
-                                            <>
-                                                <BookCardASkeletion/>
-                                                <BookCardASkeletion/>
-                                                <BookCardASkeletion/>
-                                                <BookCardASkeletion/>
-                                                <BookCardASkeletion/>
-                                                <BookCardASkeletion/>
-                                                <BookCardASkeletion/>
-                                                <BookCardASkeletion/>
-                                                <BookCardASkeletion/>
-                                                <BookCardASkeletion/>
-                                            </>
-                                        )
-                                    }
+                                        }
+                                    </div>
+                                    <button className="see-more-button" onClick={() => {
+                                        if (!bookFetchingState.fetching && !bookFetchingState.fetched) {
+                                            toggle()
+                                        }
+                                    }}>
+                                        {
+                                            !bookFetchingState.fetching ? (
+                                                <>
+                                                    <GiOpenBook className="book-icon" />
+                                                    <span>{bookFetchingState.fetched ? "You have seen all the books" : "See more"}</span>
+                                                </>
+                                            ) : (
+                                                <Rings
+                                                    height="50"
+                                                    width="50"
+                                                    color="var(--theme-color)"
+                                                    radius="8"
+                                                    wrapperStyle={{}}
+                                                    wrapperClass="loader"
+                                                    visible={true}
+                                                    ariaLabel="rings-loading"
+                                                />
+                                            )
+                                        }
+                                    </button>
                                 </div>
-                                <button className="see-more-button" onClick={() => {
-                                    if (!bookFetchingState.fetching && !bookFetchingState.fetched) {
-                                        toggle()
-                                    }
-                                }}>
-                                    {
-                                        !bookFetchingState.fetching ? (
-                                            <>
-                                                <GiOpenBook className="book-icon" />
-                                                <span>{bookFetchingState.fetched ? "You have seen all the books" : "See more"}</span>
-                                            </>
-                                        ) : (
-                                            <Rings
-                                                height="50"
-                                                width="50"
-                                                color="var(--theme-color)"
-                                                radius="8"
-                                                wrapperStyle={{}}
-                                                wrapperClass="loader"
-                                                visible={true}
-                                                ariaLabel="rings-loading"
-                                            />
-                                        )
-                                    }
-                                </button>
                             </div>
                         </div>
                     </div>

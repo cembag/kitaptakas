@@ -9,6 +9,8 @@ import useToggle from "../../hooks/use.toggle"
 import { Bars, Rings } from "react-loader-spinner"
 import useTranslation from "../../translation/use.translation"
 import BookCardASkeletion from "../../components/card/book/book.card.a/book.card.a.skeletion"
+import { useTypedSelector } from "../../provider/store"
+import bookWords from "../../context/book/book.words"
 
 export default function Home(): JSX.Element {
 
@@ -19,6 +21,7 @@ export default function Home(): JSX.Element {
 
     const [bookFetchingState, setBookFetchingState] = useState<Custom>({
         startAfter: undefined,
+        filter: undefined,
         books: [],
         fetching: false,
         fetched: false
@@ -33,6 +36,7 @@ export default function Home(): JSX.Element {
     })
 
     const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => setSearchInputState(prev => ({...prev, value: e.target.value}))
+    const {user, language} = useTypedSelector(state => state)
 
     useEffect(() => {
 
@@ -68,7 +72,7 @@ export default function Home(): JSX.Element {
                             <input type="text" onChange={handleSearchInput} value={searchInputState.value} onFocus={() => setSearchInputState(prev => ({...prev, isFocused: true}))} onBlur={() => setSearchInputState(prev => ({...prev, isFocused: false}))}/>
                         </div>
                     </div>
-                    <button onClick={() => navigate("/add_book")}>Kitap ismine göre arayın</button>
+                    <button onClick={() => navigate("/filter_book")}>Kitap ismine göre arayın</button>
                 </div>
             </section>
 
@@ -85,7 +89,7 @@ export default function Home(): JSX.Element {
                                                 <figure className="image-wrapper">
 
                                                 </figure>
-                                                <span className="category-type">{bookType}</span>
+                                                <span className="category-type">{bookWords[language][bookType]}</span>
                                             </a>
                                         </div>
                                     </a>
@@ -102,8 +106,15 @@ export default function Home(): JSX.Element {
                     <div className="books-container">
                         {
                             bookFetchingState.books.length > 0 && bookFetchingState.books.map(book => {
+                            
+                                let isFavourite: boolean = false
+                                
+                                if(user && user.favourites && user.favourites.length > 0 && user.favourites.includes(book.id)) {
+                                    isFavourite = true
+                                }
+                            
                                 return (
-                                    <BookCardA book={book}/>
+                                    <BookCardA book={book} isFavourite={isFavourite}/>
                                 )
                             })
                         }

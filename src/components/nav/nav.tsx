@@ -11,7 +11,7 @@ export default function Nav(): JSX.Element {
     const translation = useTranslation()
     const dispatch = useAppDispatch()
     const language = useTypedSelector(state => state.language)
-
+    
     return (
         <nav id="nav" role="navigation" className="padding-side">
             <div className="nav-container">

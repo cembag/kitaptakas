@@ -1,3 +1,4 @@
+import firebase from "firebase/app"
 import { auth } from "../../config/firebase";
 import IUser from "../../models/user";
 import IAuthDal from "../auth.dal";
@@ -28,5 +29,10 @@ export default class AuthDal implements IAuthDal {
 
     public async signIn(email: string, password: string): Promise<void> {
         await auth.signInWithEmailAndPassword(email, password)
+    }
+    
+    public hasAuthenticated(): boolean {
+        if(firebase.auth().currentUser) return true
+        return false
     }
 }

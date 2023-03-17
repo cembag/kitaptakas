@@ -40,7 +40,10 @@ export default function SigninModal(): JSX.Element {
                                 <InputA placeHolder="Your password" value={password} setState={setPassword} type={"password"}/>
                                 <div className="space"></div>
                                 <button className="signin-button" style={{background: (isValidEmail(email) && password.length > 6) ? "var(--theme-color)" : "rgb(160, 160, 160)", cursor: isValidEmail(email) && password.length > 6 ? "pointer" : "not-allowed"}} 
-                                onClick={async () => {
+                                onClick={async (e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                
                                     if(isValidEmail(email) && password.length > 6) {
                                         await authDal.signIn(email, password)
                                     }

@@ -1,23 +1,43 @@
 import './book.card.scss'
 import IBook from "../../../../models/book"
-import {AiFillHeart,AiOutlineHeart} from "react-icons/ai"
+import {HiOutlineHeart} from "react-icons/hi"
 import BookImg from "../../../../assets/images/ic_book.png"
+import FavouriteDal from '../../../../dal/favourite/favourite.dal'
+import useHeartAnimation from '../../../../common/use.heart.animation'
 
 
 type bookCardAProps = {
-    book: Partial<IBook>
+    book: Partial<IBook>,
+    isFavourite: boolean,
 }
 
 export default function BookCardA(bookCardAProps: bookCardAProps): JSX.Element {
 
-    const book = bookCardAProps.book
+    const {book, isFavourite} = bookCardAProps
+    
+    const favouriteDal = new FavouriteDal()
+    
+    useHeartAnimation("book" + book.id, isFavourite)
 
     return (
-        <div className="book-card">
+        <div id={"book" + book.id} className="book-card">
             <a href="" className="book-card-link">
-                <div className="book-card-container">
-                    <div className='favourite'>
-                        <AiOutlineHeart className='unfilled-icon'/>
+                <div className="book-card-container"  >
+                    <div className='favourite' onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        if(book.id) {
+                            console.log(isFavourite)
+                        
+                            if(isFavourite) {
+                                favouriteDal.delete(book.id)
+                            } else {
+                                favouriteDal.add(book.id)
+                            }
+                        }
+                    }}>
+                    <HiOutlineHeart className='heart-icon'/>
+                    
                     </div>
                     <div className='image-container'>
                         {book.images && book.images!.length > 0 ? <img src={book.images![0]} alt="image"/> : <img src={BookImg}></img>}

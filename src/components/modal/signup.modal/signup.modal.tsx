@@ -46,7 +46,7 @@ export default function SignupModal(): JSX.Element {
                                 </div>
                             </header>
 
-                            <form>
+                            <form onSubmit={() => false}>
                                 <InputA placeHolder="Username" value={username} setState={setUsername} type={"text"}/>
                                 <InputA placeHolder="Your email" value={email} setState={setEmail} type={"email"}/>
                                 <InputA placeHolder="Your password" value={password} setState={setPassword} type={"password"}/>
@@ -62,13 +62,16 @@ export default function SignupModal(): JSX.Element {
                                 <div className="space"></div>
 
                                 <button className="signup-button" style={{background: (isValidEmail(email) && password.length > 6) ? "var(--theme-color)" : "rgb(160, 160, 160)", cursor: isValidEmail(email) && password.length > 6 ? "pointer" : "not-allowed"}}
-                                onClick={async () => {
+                                onClick={async (e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                
                                     if(isValidEmail(email) && password.length > 6) {
                                         try {
                                             setRunning(true)
                                             await authDal.register(email, password, {username: username})
                                         } catch (error) {
-                                            
+                                            console.log(error)
                                         }
                                     }
                                 }}>{translation.signup}</button>
