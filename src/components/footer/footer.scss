@@ -5,6 +5,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 20;
 
     .footer-nav {
         width: 100%;
@@ -219,6 +220,10 @@
            
             .footer-items {
                 flex-direction: column;
+
+                .dropdown {
+                    cursor: pointer;
+                }
 
                 .footer-item {
                     margin-right: 0px !important;

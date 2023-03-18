@@ -1,9 +1,9 @@
 import "./filter.book.scss"
-import { MdKeyboardArrowDown } from "react-icons/md"
+import { MdFilterAlt, MdKeyboardArrowDown } from "react-icons/md"
 import InputA from "../../components/input/input.a/input.a"
 import { useState, useEffect } from "react"
 import bookTypes, { BookTypes } from "../../context/book/book.types"
-import { BookCondition, BookConditions, BookLegibility, BookLegibilites } from "../../models/book"
+import { BookConditions, BookLegibilites } from "../../models/book"
 import useToggle from "../../hooks/use.toggle"
 import BookDal, { Custom } from "../../dal/book/book.dal"
 import BookCardA from "../../components/card/book/book.card.a/book.card"
@@ -67,8 +67,8 @@ export default function FilterBook(): JSX.Element {
         },
         client: {
             type: [],
-            condition: "Good",
-            legibility: "Legible",
+            condition: "",
+            legibility: "",
             has_missing_page: false,
             number_of_pages: {
                 min: "",
@@ -116,46 +116,24 @@ export default function FilterBook(): JSX.Element {
 
     return (
         <div id="filter-book" className="page">
+
+            <button className="filter-button">
+                <MdFilterAlt className="icon"/>
+                <span>Show filters</span>
+            </button>
+
             <section id="filter">
                 <div className="filter-container">
-                    {/* <header>
+                    <header id="filter-status">
                         <div className="filtered"></div>
-                        <div className="search-container">
-                            <div className="for-options" onClick={() => setIsDropdownOpen(prev => !prev)}>
-                                <div className="options-container" style={{ height: isDropdownOpen ? "72px" : "0px", opacity: isDropdownOpen ? "1" : "0" }}>
-                                    {
-                                        localFor.map((localFor, index) => {
-                                            return (
-                                                <div key={index} className="option" onClick={() => setFilters(prev => ({ ...prev, local: { ...prev.local, for: localFor } }))}>
-                                                    <span>{localFor}</span>
-                                                </div>
-                                            )
-                                        })
-                                    }
-                                </div>
-                                <span className="selected">{"For " + filters.local.for}</span>
-                                <MdKeyboardArrowDown className="arrow-icon" />
-                            </div>
-
-                            <InputA placeHolder="Kitap ismi" value={book} setState={setBook} type={"search"}/>
-                            <button className="search-button">Ara</button>
-                        </div>
-                    </header> */}
+                        
+                    </header>
 
                     <div className="bottom">
                         <nav className="noselect">
                             <div id="filters" className="nav-item">
                                 <div className="categories option-wrapper">
-                                    <h2 onClick={() => {
-                                        toggle()
-                                        setBookFetchingState(prev => {
-                                            if(!prev.startAfter) {
-                                                return ({...prev, books: []})   
-                                            } else {
-                                                return prev
-                                            }
-                                        })
-                                    }}>Categories</h2>
+                                    <h2>Categories</h2>
                                     <header>
                                         <InputA placeHolder="Category" value={category} setState={setCategory} small={true} type={"search"} />
                                         <div className="space"></div>
@@ -198,7 +176,13 @@ export default function FilterBook(): JSX.Element {
                                         {
                                             BookConditions.map((bookCondition, index) => {
                                                 return (
-                                                    <div key={index} className="option" onClick={() => setFilters(prev => ({ ...prev, client: { ...prev.client, condition: bookCondition } }))}>
+                                                    <div key={index} className="option" onClick={() => {
+                                                        if(filters.client.condition === bookCondition) {
+                                                            setFilters(prev => ({ ...prev, client: { ...prev.client, condition: "" } }))
+                                                        } else {
+                                                            setFilters(prev => ({ ...prev, client: { ...prev.client, condition: bookCondition } }))
+                                                        }
+                                                    }}>
                                                         <div className="checkbox" style={{ background: filters.client.condition.includes(bookCondition) ? "var(--theme-color)" : "white", border: filters.client.condition.includes(bookCondition) ? "2px solid var(--theme-color)" : "2px solid var(--border-color)" }}>
                                                             <BsCheck className="checkbox-icon" />
                                                         </div>
@@ -216,7 +200,13 @@ export default function FilterBook(): JSX.Element {
                                         {
                                             BookLegibilites.map((bookLegibility, index) => {
                                                 return (
-                                                    <div key={index} className="option" onClick={() => setFilters(prev => ({ ...prev, client: { ...prev.client, legibility: bookLegibility } }))}>
+                                                    <div key={index} className="option" onClick={() => {
+                                                        if(filters.client.legibility === bookLegibility) {
+                                                            setFilters(prev => ({ ...prev, client: { ...prev.client, legibility: "" } }))
+                                                        } else {
+                                                            setFilters(prev => ({ ...prev, client: { ...prev.client, legibility: bookLegibility } }))
+                                                        }
+                                                        }}>
                                                         <div className="checkbox" style={{ background: filters.client.legibility.includes(bookLegibility) ? "var(--theme-color)" : "white", border: filters.client.legibility.includes(bookLegibility) ? "2px solid var(--theme-color)" : "2px solid var(--border-color)" }}>
                                                             <BsCheck className="checkbox-icon" />
                                                         </div>
@@ -281,6 +271,18 @@ export default function FilterBook(): JSX.Element {
                                         <span>When you activate this option, you will also see the books with missing pages.</span>
                                     </div>
                                 </div>
+                                <button className="apply-filters" onClick={() => {
+                                        toggle()
+                                        setBookFetchingState(prev => {
+                                            if(!prev.startAfter) {
+                                                return ({...prev, books: []})   
+                                            } else {
+                                                return prev
+                                            }
+                                        })
+                                    }}>
+                                    <span>Apply Filters</span>
+                                </button>
                             </div>
 
                             <div id="sss" className="nav-item">
@@ -303,7 +305,10 @@ export default function FilterBook(): JSX.Element {
                         </nav>
 
                         <div className="right">
-                            <InputA placeHolder="Kitap ismi" value={book} setState={setBook} type={"search"}/>
+                            <div className="search-container">
+                                <InputA placeHolder="Kitap ismi" value={book} setState={setBook} type={"search"}/>
+                                <button className="search-button">Search</button>
+                            </div>
                             
                             <div className="books">
                                 <div className="books-wrapper">

@@ -4,6 +4,7 @@ import {HiOutlineHeart} from "react-icons/hi"
 import BookImg from "../../../../assets/images/ic_book.png"
 import FavouriteDal from '../../../../dal/favourite/favourite.dal'
 import useHeartAnimation from '../../../../common/use.heart.animation'
+import { useNavigate } from 'react-router-dom'
 
 
 type bookCardAProps = {
@@ -18,10 +19,11 @@ export default function BookCardA(bookCardAProps: bookCardAProps): JSX.Element {
     const favouriteDal = new FavouriteDal()
     
     useHeartAnimation("book" + book.id, isFavourite)
+    const navigate = useNavigate()
 
     return (
-        <div id={"book" + book.id} className="book-card">
-            <a href="" className="book-card-link">
+        <div id={"book" + book.id} className="book-card" onClick={() => navigate("/book/" + book.id)}>
+            <a className="book-card-link">
                 <div className="book-card-container"  >
                     <div className='favourite' onClick={(e) => {
                         e.stopPropagation();

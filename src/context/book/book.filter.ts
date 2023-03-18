@@ -15,8 +15,8 @@ export type FilterState = {
     },
     client: {
         type: BookTypes[],
-        condition: BookCondition,
-        legibility: BookLegibility,
+        condition: BookCondition | "",
+        legibility: BookLegibility | "",
         number_of_pages?: {
             min: string,
             max: string

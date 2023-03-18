@@ -56,14 +56,18 @@ export default class BookDal implements IBookDal {
     
     private applyFilters(filter: FilterState): firebase.firestore.Query<IBook> {
     
-        console.log(filter)
-    
-        let query = dbModel.books.where("condition", "==", filter.client.condition).where("legibility", "==", filter.client.legibility)
+        let query = dbModel.books.orderBy("created_at", "desc")
         
         if(filter.client.number_of_pages && filter.client.number_of_pages.min && filter.client.number_of_pages.max) {
-            query = query.where("number_of_pages", ">=", Number(filter.client.number_of_pages.min)).where("number_of_pages", "<=", Number(filter.client.number_of_pages.max)).orderBy("number_of_pages", "desc")
-        } else {
-            query = query.orderBy("created_at", "desc")
+            query = dbModel.books.where("number_of_pages", ">=", Number(filter.client.number_of_pages.min)).where("number_of_pages", "<=", Number(filter.client.number_of_pages.max)).orderBy("number_of_pages", "desc")
+        }
+
+        if(filter.client.condition) {
+            query = query.where("condition", "==", filter.client.condition)
+        }
+
+        if(filter.client.legibility) {
+            query = query.where("legibility", "==", filter.client.legibility)
         }
         
         if(filter.client.type && filter.client.type.length > 0) {

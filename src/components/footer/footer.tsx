@@ -44,13 +44,13 @@ export default function Footer(): JSX.Element {
                     </div>
 
                     <div className="footer-item dropdown">
-                        <header className="footer-item-header" onClick={() => setDropdown(dropdown === "keşfet" ? "default" : "keşfet")} style={{ marginBottom: dropdown === "keşfet" ? "15px" : width < 1000 ? "0px" : "15px" }}>
+                        <header className="footer-item-header" onClick={() => setDropdown(dropdown === "keşfet" ? "default" : "keşfet")} style={{ marginBottom: dropdown === "keşfet" ? "15px" : width <= 1000 ? "0px" : "15px" }}>
                             <h2><b>kitaptakas</b>'ı keşfedin</h2>
                             <div className="dropdown-arrow">
                                 <MdKeyboardArrowDown className="arrow-icon" style={{ transform: dropdown === "keşfet" ? "rotate(180deg)" : "rotate(0deg)" }} />
                             </div>
                         </header>
-                        <div className="links-wrapper" style={{ height: dropdown === "keşfet" ? "165px" : width < 1000 ? "0px" : "165px", opacity: dropdown === "keşfet" ? "1" : width < 1000 ? "0" : "1" }}>
+                        <div className="links-wrapper" style={{ height: dropdown === "keşfet" ? "165px" : width <= 1000 ? "0px" : "165px", opacity: dropdown === "keşfet" ? "1" : width <= 1000 ? "0" : "1" }}>
                             <ul className="links">
                                 <li className="link"><a href="">Hakkımızda</a></li>
                                 <li className="link"><a href="">Kariyer</a></li>
@@ -62,13 +62,13 @@ export default function Footer(): JSX.Element {
                     </div>
 
                     <div className="footer-item dropdown">
-                        <header className="footer-item-header" onClick={() => setDropdown(dropdown === "yardım" ? "default" : "yardım")} style={{ marginBottom: dropdown === "yardım" ? "15px" : width < 1000 ? "0px" : "15px" }}>
+                        <header className="footer-item-header" onClick={() => setDropdown(dropdown === "yardım" ? "default" : "yardım")} style={{ marginBottom: dropdown === "yardım" ? "15px" : width <= 1000 ? "0px" : "15px" }}>
                             <h2>Yardıma mı ihtiyacınız var?</h2>
                             <div className="dropdown-arrow">
                                 <MdKeyboardArrowDown className="arrow-icon" style={{ transform: dropdown === "yardım" ? "rotate(180deg)" : "rotate(0deg)" }} />
                             </div>
                         </header>
-                        <div className="links-wrapper" style={{ height: dropdown === "yardım" ? "165px" : width < 1000 ? "0px" : "165px", opacity: dropdown === "yardım" ? "1" : width < 1000 ? "0" : "1" }}>
+                        <div className="links-wrapper" style={{ height: dropdown === "yardım" ? "165px" : width <= 1000 ? "0px" : "165px", opacity: dropdown === "yardım" ? "1" : width <= 1000 ? "0" : "1" }}>
                             <ul className="links">
                                 <li className="link"><a href="">Sıkça Sorulan Sorular</a></li>
                                 <li className="link"><a href="">Kişisel Verilerin Korunması</a></li>
@@ -80,13 +80,13 @@ export default function Footer(): JSX.Element {
                     </div>
 
                     <div className="footer-item dropdown">
-                        <header className="footer-item-header" onClick={() => setDropdown(dropdown === "iş" ? "default" : "iş")} style={{ marginBottom: dropdown === "iş" ? "15px" : width < 1000 ? "0px" : "15px" }}>
+                        <header className="footer-item-header" onClick={() => setDropdown(dropdown === "iş" ? "default" : "iş")} style={{ marginBottom: dropdown === "iş" ? "15px" : width <= 1000 ? "0px" : "15px" }}>
                             <h2>İş Ortağımız Olun</h2>
                             <div className="dropdown-arrow">
                                 <MdKeyboardArrowDown className="arrow-icon" style={{ transform: dropdown === "iş" ? "rotate(180deg)" : "rotate(0deg)" }} />
                             </div>
                         </header>
-                        <div className="links-wrapper" style={{ height: dropdown === "iş" ? "165px" : width < 1000 ? "0px" : "165px", opacity: dropdown === "iş" ? "1" : width < 1000 ? "0" : "1" }}>
+                        <div className="links-wrapper" style={{ height: dropdown === "iş" ? "165px" : width <= 1000 ? "0px" : "165px", opacity: dropdown === "iş" ? "1" : width <= 1000 ? "0" : "1" }}>
                             <ul className="links">
                                 <li className="link"><a href="">Bayimiz Olun</a></li>
                                 <li className="link"><a href="">Deponuzu Kiralayın</a></li>
