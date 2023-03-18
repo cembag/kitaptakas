@@ -4,6 +4,7 @@ import BookProfile from "./screens/book.profile/book.profile";
 import FilterBook from "./screens/filter.book/filter.book";
 import Home from "./screens/home/home";
 import NotFound from "./screens/not.found/not.found";
+import Sss from "./screens/sss/sss";
 import UserProfile from "./screens/user.profile/user.profile";
 
 export default function Router(): JSX.Element {
@@ -17,6 +18,7 @@ export default function Router(): JSX.Element {
                 <Route path="/book/*" element={<BookProfile/>}/>
                 <Route path="/home" element={<Home/>}/>
                 <Route path="*" element={<NotFound/>}/>
+                <Route path="/Sss" element={<Sss/>}/>
             </Routes>
         </BrowserRouter>
     )

@@ -1,0 +1,87 @@
+#Sss{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-color);
+    .kapsayici{   
+        margin: 50px 0px;
+        max-width: var(--break-point);
+        display: flex;
+        justify-content: space-between;
+        .navSide{
+            width: 25%;
+            height: min-content;
+            display: flex;
+            flex-direction: column;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 0 0px 1px #0001;
+            overflow: hidden;
+            .oneNav{
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                &:not(:last-child){
+                    border-bottom: 1px solid #0001;
+                }
+                a{
+                    color: rgb(100,100,100);   
+                &:hover{
+                    color: var(--theme-color)
+                }
+                    
+                }
+            }
+        }
+        .textSide{
+            width: 73%;
+            box-shadow: 0 0 0px 1px #0001;
+            border-radius: 10px;
+            background-color: white;
+            padding: 50px;
+            .text{
+                height: 100%;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                strong{
+                    margin-bottom: 20px;
+                    font-size: 20px;
+                    color: var(--theme-color);
+                }
+                p{
+                    &:not(:last-child){
+                        margin-bottom: 20px;
+                    }
+                }
+            }
+            
+        }
+    
+    }
+}
+@media screen and (max-width:800px){
+#Sss{
+    .kapsayici{ 
+        flex-direction: column;
+        padding: 20px;  
+        width: 100%;
+        .navSide{
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            white-space: nowrap;    
+            overflow-x: scroll;
+            .oneNav{
+                padding: 0px 10px;
+            }
+        }
+        .textSide{
+            width: 100%;
+            margin-top: 20px;
+        }
+    }
+}
+    
+}
