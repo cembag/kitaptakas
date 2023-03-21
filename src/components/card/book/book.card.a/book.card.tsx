@@ -15,9 +15,7 @@ type bookCardAProps = {
 export default function BookCardA(bookCardAProps: bookCardAProps): JSX.Element {
 
     const {book, isFavourite} = bookCardAProps
-    
     const favouriteDal = new FavouriteDal()
-    
     useHeartAnimation("book" + book.id, isFavourite)
     const navigate = useNavigate()
 
@@ -28,6 +26,7 @@ export default function BookCardA(bookCardAProps: bookCardAProps): JSX.Element {
                     <div className='favourite' onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
+                        
                         if(book.id) {
                             console.log(isFavourite)
                         
@@ -48,7 +47,10 @@ export default function BookCardA(bookCardAProps: bookCardAProps): JSX.Element {
                         <span>{book.title}</span>
                         <span>{book.author}</span>
                         <div style={{flex: 1}}></div>
-                        <button className='trade-button'>Trade</button>
+                        <button className='trade-button' onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                        }}>Trade</button>
                     </div>
                 </div>
             </a>

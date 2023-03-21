@@ -11,7 +11,7 @@ const store = configureStore({
     reducer: {
         theme: themeReducer,
         language: languageReducer,
-        user: userReducer,
+        globalUser: userReducer,
         modals: modalsReducer,
         snackbar: snackbarReducer
     },

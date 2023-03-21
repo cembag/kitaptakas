@@ -3,7 +3,7 @@ import "./signup.modal.scss"
 import { useState } from "react"
 import { CgClose } from "react-icons/cg"
 import { BsCheckLg } from "react-icons/bs"
-import { setSignupModal } from "../../../provider/modals/modals.reducer"
+import { setSigninModal, setSignupModal } from "../../../provider/modals/modals.reducer"
 import { useAppDispatch, useTypedSelector } from "../../../provider/store"
 import useTranslation from "../../../translation/use.translation"
 import InputA from "../../input/input.a/input.a"
@@ -29,7 +29,14 @@ export default function SignupModal(): JSX.Element {
     const [running, setRunning] = useState<boolean>(false)
     
     const changeModal = () => {
-        
+        const signupModal = document.getElementById("signup-modal")
+        if(signupModal) {
+            signupModal.style.scale = "0";
+        }
+        setTimeout(() => {
+            dispatch(setSignupModal(false))
+            dispatch(setSigninModal(true))
+        }, 500)
     }
     
     return (
@@ -79,7 +86,7 @@ export default function SignupModal(): JSX.Element {
                         </div>
                         
                         <nav>
-                            <span><b>kitaptakas</b>'a üye misiniz? <a href="">{translation.login}</a></span>
+                            <span><b>kitaptakas</b>'a üye misiniz? <a onClick={changeModal}>{translation.login}</a></span>
                         </nav>
                     </div>
                 </div>

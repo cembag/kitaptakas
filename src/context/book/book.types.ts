@@ -1,6 +1,6 @@
-export type BookTypes = typeof bookTypes[number]
+export type BookType = typeof bookTypes[number]
 
-const bookTypes = [
+export const bookTypes = [
     "Autobiography", 
     "Biography", 
     "Computer", 
@@ -22,4 +22,4 @@ const bookTypes = [
     "Science"
 ] as const
 
-export default bookTypes
+export default BookType

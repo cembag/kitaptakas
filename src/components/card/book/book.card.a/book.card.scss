@@ -32,6 +32,7 @@
                 border-radius: 50%;
                 box-shadow: -1px 1px 10px 2px #0002;
                 z-index: 10;
+                cursor: pointer;
         
                 .heart-icon {
                     width: 100%;
@@ -40,7 +41,6 @@
                     color: var(--color-black-smooth);
                     transition: fill .3s ease;
                     
-        
                     &:hover {
                         color: var(--theme-color);
                     }
@@ -48,11 +48,17 @@
             }
         
             .image-container {
-                width: 100%;
+                width: calc(100% - 40px);
                 aspect-ratio: 5/7;
                 border-radius: 10px;
+                margin: 20px;
                 overflow: hidden;
-                padding: 20px;
+
+                &:hover {
+                    img {
+                        scale: 1.1;
+                    }
+                }
         
                 img {
                     width: 100%;
@@ -61,6 +67,7 @@
                     max-height: 100%;
                     border-radius: 10px;
                     filter: brightness(85%);
+                    transition: scale .5s ease;
                 }
             }
         

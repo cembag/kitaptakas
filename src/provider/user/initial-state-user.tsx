@@ -1,5 +1,15 @@
 import IUser from "../../models/user"
 
-const initialStateUser: IUser | null = null
+export type UserData = {
+    user: IUser | null,
+    favourites: string[],
+    trades: string[]
+}
 
-export default initialStateUser
+const initialStateUserData: UserData = {
+    user: null,
+    favourites: [],
+    trades: []
+}
+
+export default initialStateUserData

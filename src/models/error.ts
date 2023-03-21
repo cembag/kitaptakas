@@ -1,11 +1,9 @@
-export enum ErrorTypes {
-    FETCH_USER = "FETCH_USER",
-    USERS_ONSNAPSHOT = "USERS_ONSNAPSHOT",
-    FETCH_PRODUCTS = "FETCH_PRODUCTS",
-    FIND_SOULMATE = "FIND_SOULMATE",
-}
+import { ErrorCode } from "../context/error/codes";
+import { ErrorMessage } from "../context/error/messages";
+import { ErrorType } from "../context/error/types";
 
 export default interface IError {
-    message: string,
-    date: Date,
+    code: ErrorCode,
+    type: ErrorType,
+    message: ErrorMessage,
 }

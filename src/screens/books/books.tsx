@@ -1,8 +1,8 @@
-import "./filter.book.scss"
-import { MdFilterAlt, MdKeyboardArrowDown } from "react-icons/md"
+import "./books.scss"
+import { MdFilterAlt } from "react-icons/md"
 import InputA from "../../components/input/input.a/input.a"
 import { useState, useEffect } from "react"
-import bookTypes, { BookTypes } from "../../context/book/book.types"
+import BookType, { bookTypes } from "../../context/book/book.types"
 import { BookConditions, BookLegibilites } from "../../models/book"
 import useToggle from "../../hooks/use.toggle"
 import BookDal, { Custom } from "../../dal/book/book.dal"
@@ -55,7 +55,7 @@ const questions: Array<string> = [
     "Kitap takas işlemi güvenli mi?",
 ]
 
-export default function FilterBook(): JSX.Element {
+export default function Books(): JSX.Element {
 
     const { value, toggle } = useToggle()
     const bookDal = new BookDal()
@@ -94,7 +94,7 @@ export default function FilterBook(): JSX.Element {
     const [book, setBook] = useState<string>("")
     // const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false)
 
-    const { user, language } = useTypedSelector(state => state)
+    const { globalUser, language } = useTypedSelector(state => state)
 
     useEffect(() => {
 
@@ -115,7 +115,7 @@ export default function FilterBook(): JSX.Element {
     }, [filters.client.condition, filters.client.has_missing_page, filters.client.legibility, filters.client.number_of_pages?.max, filters.client.number_of_pages?.min, filters.client.type.length])
 
     return (
-        <div id="filter-book" className="page">
+        <div id="books" className="page">
 
             <button className="filter-button">
                 <MdFilterAlt className="icon"/>
@@ -148,7 +148,7 @@ export default function FilterBook(): JSX.Element {
                                             bookTypes.map((bookType, index) => {
                                                 return (
                                                     <div key={index} className="option" style={{ display: bookType.toLowerCase().includes(category.toLowerCase()) ? "flex" : "none" }} onClick={() => setFilters(prev => {
-                                                        let books: BookTypes[] = prev.client.type
+                                                        let books: BookType[] = prev.client.type
                                                         if (books.includes(bookType)) {
                                                             const index = books.indexOf(bookType, 0);
                                                             books.splice(index, 1)
@@ -318,7 +318,7 @@ export default function FilterBook(): JSX.Element {
 
                                                 let isFavourite: boolean = false
 
-                                                if (user && user.favourites && user.favourites.length > 0 && user.favourites.includes(book.id)) {
+                                                if (globalUser && globalUser.favourites.includes(book.id)) {
                                                     isFavourite = true
                                                 }
 

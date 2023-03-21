@@ -3,7 +3,7 @@ import React, { useState } from "react"
 import firebase from "firebase"
 import BookDal from "../../dal/book/book.dal"
 import IBook, { BookCondition, BookConditions, BookLanguage, BookLanguages, BookLegibility, BookLegibilites } from "../../models/book"
-import bookTypes, { BookTypes } from "../../context/book/book.types"
+import BookType, { bookTypes } from "../../context/book/book.types"
 
 
 export default function AddBook(): JSX.Element {
@@ -33,7 +33,7 @@ export default function AddBook(): JSX.Element {
     const handleCondition = (e: React.ChangeEvent<HTMLSelectElement>) => setBook(prev => ({...prev, condition: e.target.value as BookCondition}))
     const handleLegibility = (e: React.ChangeEvent<HTMLSelectElement>) => setBook(prev => ({...prev, legibility: e.target.value as BookLegibility}))
     const handleNumberOfPages = (e: React.ChangeEvent<HTMLInputElement>) => setBook(prev => ({...prev, number_of_pages: parseInt(e.target.value)}))
-    const handleType = (e: React.ChangeEvent<HTMLSelectElement>) => setBook(prev => ({...prev, type: e.target.value as BookTypes}))
+    const handleType = (e: React.ChangeEvent<HTMLSelectElement>) => setBook(prev => ({...prev, type: e.target.value as BookType}))
     const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => setImage(e.target.value)
 
     return (
@@ -72,9 +72,9 @@ export default function AddBook(): JSX.Element {
                 </select>
                 <select id="typeSelect" value={book.type} onChange={handleType}>
                     {
-                        bookTypes.map((type, index) => {
+                        bookTypes.map((bookType, index) => {
                             return (
-                                <option key={index} value={type}>{type}</option>
+                                <option key={index} value={bookType}>{bookType}</option>
                             )
                         })
                     }

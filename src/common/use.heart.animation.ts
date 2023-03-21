@@ -2,7 +2,6 @@ import { useEffect } from "react"
 
 export default function useHeartAnimation(elementId: string, isFavourite: boolean) {
 
-
     const newspaperSpinning = [
         { transform: " scale(.2)" },
         { transform: " scale(1.1)" },

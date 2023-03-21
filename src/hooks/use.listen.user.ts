@@ -1,22 +1,22 @@
-import { useEffect } from "react"
-import firebase from "firebase/app"
+import React, { useEffect } from "react"
 import IUser from "../models/user";
 import dbModel from "../utils/db.model";
 import { useAppDispatch } from "../provider/store";
 import { setUser } from "../provider/user/user";
+import { FirebaseAuthContext } from "./auth.provider";
 
 export default function useListenUser() {
-    
+
+    const authUser = React.useContext(FirebaseAuthContext)
     const dispatch = useAppDispatch()
     
     useEffect(() => {
     
         let userDisposable: (() => void) | null
       
-        if(firebase.auth().currentUser) {
+        if(authUser) {
         
-            const uid = firebase.auth().currentUser!.uid
-            
+            const uid = authUser.uid
             console.log(uid)
             
             userDisposable = dbModel.users.doc(uid).onSnapshot((userSnapshot) => {
@@ -24,6 +24,9 @@ export default function useListenUser() {
                 console.log("USER UPDATED: ", user)
                 dispatch(setUser(user))
             })
+            
+        } else {
+            dispatch(setUser(null))
         }
         
         return () => {
@@ -32,6 +35,6 @@ export default function useListenUser() {
             }
         }
       
-    }, [firebase.auth().currentUser])
+    }, [authUser])
 
 }

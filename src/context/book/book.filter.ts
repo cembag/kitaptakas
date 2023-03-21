@@ -1,5 +1,5 @@
 import { BookCondition, BookLegibility } from "../../models/book"
-import { BookTypes } from "./book.types"
+import { BookType } from "./book.types"
 
 export type FilterFor = typeof localFor[number]
 
@@ -14,7 +14,7 @@ export type FilterState = {
         title: string,
     },
     client: {
-        type: BookTypes[],
+        type: BookType[],
         condition: BookCondition | "",
         legibility: BookLegibility | "",
         number_of_pages?: {

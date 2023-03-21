@@ -2,7 +2,7 @@ import "../modals.scss"
 import "./signin.modal.scss"
 import { CgClose } from "react-icons/cg"
 import { BsCheckLg } from "react-icons/bs"
-import { setSigninModal } from "../../../provider/modals/modals.reducer"
+import { setSigninModal, setSignupModal } from "../../../provider/modals/modals.reducer"
 import { useAppDispatch, useTypedSelector } from "../../../provider/store"
 import useTranslation from "../../../translation/use.translation"
 import { useState } from "react"
@@ -19,13 +19,23 @@ export default function SigninModal(): JSX.Element {
 
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
-    const [isChecked, setIsChecked] = useState<boolean>(false)
+
+    const changeModal = () => {
+        const signinModal = document.getElementById("signin-modal")
+        if(signinModal) {
+            signinModal.style.scale = "0";
+        }
+        setTimeout(() => {
+            dispatch(setSigninModal(false))
+            dispatch(setSignupModal(true))
+        }, 500)
+    }
 
     return (
         <>{
             modal && (
-                <div id="signin-modal" className="modal-bg" onClick={() => dispatch(setSigninModal(false))}>
-                    <div className="modal" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-bg" onClick={() => dispatch(setSigninModal(false))}>
+                    <div id="signin-modal" className="modal" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-container">
                             <header>
                                 <div className="empty"></div>
@@ -52,7 +62,7 @@ export default function SigninModal(): JSX.Element {
                         </div>
 
                         <nav>
-                            <span>Hala kayıt olmadınız mı? <a href="">Kayıt ol</a></span>
+                            <span>Hala kayıt olmadınız mı? <a onClick={changeModal}>Kayıt ol</a></span>
                         </nav>
                     </div>
                 </div>

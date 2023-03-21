@@ -1,9 +1,8 @@
 import { LanguageType } from "../language/supported.languages";
-import { BookTypes } from "./book.types";
-
+import { BookType } from "./book.types";
 
 const bookWords: {[key in LanguageType]: {
-    [key in BookTypes]: string
+    [key in BookType]: string
 }} = {
     tr: {
         Romance: "Roman",

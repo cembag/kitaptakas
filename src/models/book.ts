@@ -1,5 +1,5 @@
 import firebase from "firebase"
-import { BookTypes } from "../context/book/book.types"
+import { BookType } from "../context/book/book.types"
 
 // export type BookStatus = ""
 export type BookCondition = typeof BookConditions[number]
@@ -28,7 +28,7 @@ export default interface IBook {
     id: string
     shared_by: string
     owner?: string
-    type: BookTypes
+    type: BookType
     language: BookLanguage
     title: string
     author: string

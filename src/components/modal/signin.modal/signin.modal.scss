@@ -1,5 +1,5 @@
-#signin-modal {
-    .modal {
+.modal-bg {
+    #signin-modal {
         .modal-container {
             form {
                 height: 100%;
@@ -153,6 +153,7 @@
                 a {
                     color: var(--theme-color);
                     font-weight: 700;
+                    cursor: pointer;
                 }
             }
         }

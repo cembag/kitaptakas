@@ -1,7 +1,8 @@
 import "./home.scss"
+import React from "react"
 import { useEffect, useState } from "react"
 import { GiOpenBook } from "react-icons/gi"
-import bookTypes from "../../context/book/book.types"
+import {bookTypes} from "../../context/book/book.types"
 import BookCardA from "../../components/card/book/book.card.a/book.card"
 import { useNavigate } from "react-router-dom"
 import BookDal, { Custom } from "../../dal/book/book.dal"
@@ -18,6 +19,7 @@ export default function Home(): JSX.Element {
     const navigate = useNavigate()
     const {value, toggle} = useToggle()
     const bookDal = new BookDal()
+    //const users = React.useContext(FirebaseAuthContext)
 
     const [bookFetchingState, setBookFetchingState] = useState<Custom>({
         startAfter: undefined,
@@ -36,7 +38,7 @@ export default function Home(): JSX.Element {
     })
 
     const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => setSearchInputState(prev => ({...prev, value: e.target.value}))
-    const {user, language} = useTypedSelector(state => state)
+    const {globalUser, language} = useTypedSelector(state => state)
 
     useEffect(() => {
 
@@ -87,7 +89,7 @@ export default function Home(): JSX.Element {
                                         <div data-testid="link" className="category-wrapper">
                                             <a className="category-link">
                                                 <figure className="image-wrapper">
-
+                                                    <GiOpenBook className="image"/>
                                                 </figure>
                                                 <span className="category-type">{bookWords[language][bookType]}</span>
                                             </a>
@@ -109,7 +111,7 @@ export default function Home(): JSX.Element {
                             
                                 let isFavourite: boolean = false
                                 
-                                if(user && user.favourites && user.favourites.length > 0 && user.favourites.includes(book.id)) {
+                                if(globalUser && globalUser.favourites.includes(book.id)) {
                                     isFavourite = true
                                 }
                             

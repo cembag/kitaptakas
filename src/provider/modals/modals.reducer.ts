@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import SetModalAction from "./modals.actions";
+import {SetModalAction, SetTradeModalAction} from "./modals.actions";
 import modalInitialState, { IModals } from "./modals.initial.state";
 
 export const modals = createSlice({
@@ -14,9 +14,12 @@ export const modals = createSlice({
         },
         setSignupModal: (state: IModals, action: SetModalAction) => {
             state.signUp = action.payload
+        },
+        setTradeModal: (state: IModals, action: SetTradeModalAction) => {
+            state.trade = action.payload
         }
     }
 })
 
-export const {setLanguageModal, setSigninModal, setSignupModal} = modals.actions
+export const {setLanguageModal, setSigninModal, setSignupModal, setTradeModal} = modals.actions
 export default modals.reducer
