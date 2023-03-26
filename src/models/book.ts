@@ -26,8 +26,7 @@ export const BookLegibilites = [
 
 export default interface IBook {
     id: string
-    shared_by: string
-    owner?: string
+    owner: string
     type: BookType
     language: BookLanguage
     title: string
@@ -37,7 +36,6 @@ export default interface IBook {
     has_missing_page: boolean
     legibility: BookLegibility
     created_at: firebase.firestore.Timestamp
-    images?: string[]
     condition: BookCondition
-    //status: BookStatus
+    images: string[]
 }

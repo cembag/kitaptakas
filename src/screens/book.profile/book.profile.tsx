@@ -68,18 +68,24 @@ export default function BookProfile(): JSX.Element {
 
     }, [book && globalUser && globalUser.favourites.length])
 
+    useEffect(() => {
+        console.log(bookFavouriteData.count)
+    }, [bookFavouriteData.count])
+
     return (
         <div id="book-page" className="page">
 
             {
                 book && (
                     <section id="book">
-                        <div className="book-wrapper" onClick={async () => {
+                        <div className="book-container" onClick={async () => {
                             const favourites = (await rDb.ref("users/" + globalUser.user!.id + "/favourites").get()).val()
                             console.log(favourites)
                         }}>
-                            {book.images && book.images.length > 0 && <img className="book-img" src={book.images[0]} alt="" />}
-                            {!book.images || book.images.length === 0 && <img className="book-img" src={require("../../assets/images/ic_book.png")} alt="" />}
+                            <figure>
+                                {book.images && book.images.length > 0 && <img src={book.images[0]} alt="" />}
+                                {!book.images || book.images.length === 0 && <img src={require("../../assets/images/ic_book.png")} alt="" />}
+                            </figure>
                             <div className="book">
                                 <header>
                                     <h2>{book.title.toUpperCase()}</h2>
@@ -143,6 +149,8 @@ export default function BookProfile(): JSX.Element {
                                     </div>
                                 </div>
 
+                                <div className="space"></div>
+
                                 <div className="buttons">
                                     <button className="trade-button" onClick={() => dispatch(setTradeModal(book.id))}>
                                         Trade
@@ -155,10 +163,6 @@ export default function BookProfile(): JSX.Element {
                             <div className="owner-wrapper">
 
                                 <header className="container">
-                                    <div className="owner">
-                                        <RiUserFill className="icon"/>
-                                        <span>Owner</span>
-                                    </div>
                                     <span className="name">Cem Hakkı Bağ</span>
                                     <span className="trades">2000 <b>işlem</b></span>
                                 </header>
@@ -176,32 +180,34 @@ export default function BookProfile(): JSX.Element {
             }
 
             <section id="recommended">
-                <h2>Recommended for you</h2>
-                <div className="book-wrapper">
-                    {
-                        book && (
-                            <>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            <BookCardA book={book} isFavourite={false}/>
-                            </>
-                        )
-                    }
+                <div className="recommended-container">
+                    <h2>Recommended for you</h2>
+                    <div className="books">
+                        {
+                            book && (
+                                <>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                <BookCardA book={book} isFavourite={false}/>
+                                </>
+                            )
+                        }
+                    </div>
                 </div>
             </section>
 

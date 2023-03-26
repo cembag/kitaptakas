@@ -4,6 +4,7 @@ import firebase from "firebase"
 import BookDal from "../../dal/book/book.dal"
 import IBook, { BookCondition, BookConditions, BookLanguage, BookLanguages, BookLegibility, BookLegibilites } from "../../models/book"
 import BookType, { bookTypes } from "../../context/book/book.types"
+import { auth } from "../../config/firebase"
 
 
 export default function AddBook(): JSX.Element {
@@ -97,14 +98,14 @@ export default function AddBook(): JSX.Element {
                 author: book.author!,
                 publisher: book.publisher!,
                 language: book.language!,
-                shared_by: "id",
                 condition: book.condition!,
                 legibility: book.legibility!,
                 has_missing_page: false,
                 number_of_pages: book.number_of_pages!,
                 type: book.type!,
                 created_at: firebase.firestore.Timestamp.fromDate(new Date()),
-                images: book.images!
+                images: book.images!,
+                owner: auth.currentUser!.uid
                 })
                 
                 setBook(initialBook)

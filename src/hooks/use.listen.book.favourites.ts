@@ -17,12 +17,9 @@ export default function useListenBookFavourites(bookId: string | undefined): Boo
 
         if(bookId) {
 
-            rDb.ref("books/" + bookId + "/favourites/-favourites-count").on("value", (countSnap) => {
-
+            rDb.ref(`metadatas/count/books/${bookId}/favourites`).on("value", (countSnap) => {
                 const count = countSnap.val() as number
-
                 console.log(count)
-
                 if(count) {
                     setBookFavouriteData(prev => ({
                         ...prev,
@@ -53,7 +50,7 @@ export default function useListenBookFavourites(bookId: string | undefined): Boo
         }
 
         return () => {
-            rDb.ref("books/" + bookId + "/favourites/-favourites-count").off("value")
+            rDb.ref(`metadatas/count/books/${bookId}/favourites`).off("value")
             rDb.ref("books/" + bookId + "/favourites").off("child_added")
             rDb.ref("books/" + bookId + "/favourites").off("child_removed")
         }

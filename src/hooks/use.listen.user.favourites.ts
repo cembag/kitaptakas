@@ -1,44 +1,37 @@
 import { useContext, useEffect } from "react";
-import { rDb } from "../config/firebase";
 import { useAppDispatch } from "../provider/store";
 import { addToFavourites, removeFromFavourites, setFavourites } from "../provider/user/user";
+import dbModel from "../utils/db.model";
 import { FirebaseAuthContext } from "./auth.provider";
 
 export default function useListenUserFavourites() {
     
-    const authUser = useContext(FirebaseAuthContext)
-    const dispatch = useAppDispatch()
+    const authUser = useContext(FirebaseAuthContext);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
+        let favouritesDisposable: (() => void) | null = null
 
         if(authUser) {
-
-            const uid = authUser.uid
-
-            rDb.ref("users/" + uid + "/favourites").get().then((favouritesSnap) => {
-                let favourites: string[] = []
-                favouritesSnap.forEach(favourite => {
-                    favourites.push(favourite.val())
-                })
-                dispatch(setFavourites(favourites))
-
-                rDb.ref("users/" + uid + "/favourites").on("child_added", (favourite) => {
-                    dispatch(addToFavourites(favourite.val() as string))
-                })
-                
-                rDb.ref("users/" + uid + "/favourites").on("child_removed", (favourite) => {
-                    dispatch(removeFromFavourites(favourite.val() as string))
+            const id = authUser.uid;
+            favouritesDisposable = dbModel.users.doc(id).collection("favourites").onSnapshot((snapshot) => {
+                dispatch(setFavourites([]));
+                snapshot.docChanges().forEach((change) => {
+                    if(change.type === "added") {
+                        dispatch(addToFavourites(change.doc.id))
+                    } else if (change.type === "removed") {
+                        dispatch(removeFromFavourites(change.doc.id))
+                    }
                 })
             })
+
         }
 
         return () => {
-            if(authUser) {
-                rDb.ref("users/" + authUser.uid + "/favourites").off("child_added")
-                rDb.ref("users/" + authUser.uid + "/favourites").off("child_removed")
+            if(favouritesDisposable) {
+                favouritesDisposable()
             }
         }
 
     }, [authUser])
-
 }

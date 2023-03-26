@@ -4,7 +4,6 @@ const errors = {
         type: "auth",
         message: "Authentication required you must sign or register.",
     },
-    
 }
 
 export default errors

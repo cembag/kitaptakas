@@ -14,7 +14,7 @@ export default class FavouriteService {
             message: "Authentication required, you must sign in or register."
         } as IError
 
-        const favouriteLength = (await rDb.ref("users/" + auth.currentUser!.uid + "/favourites").get()).numChildren() + 1
+        const favouriteLength = (await rDb.ref(`metadatas/count/users/${auth.currentUser!.uid}/favourites`).get()).val()
 
         if(favouriteLength >= this.favouriteLimit) throw {
             code: "407",

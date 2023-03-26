@@ -1,6 +1,5 @@
 import firebase from "firebase"
 import { FilterState } from "../../context/book/book.filter";
-import { BookType } from "../../context/book/book.types";
 import IBook from "../../models/book";
 import dbModel from "../../utils/db.model";
 import IBookDal from "../book.dal";
@@ -19,11 +18,6 @@ export default class BookDal implements IBookDal {
 
     public async addBook(book: IBook): Promise<void> {
         (await dbModel.books.add(book).then((book) => dbModel.books.doc(book.id).update({id: book.id})))
-    }
-
-    public async getBooksByType(type: BookType): Promise<IBook[]> {
-        // Part part çek
-        return (await dbModel.books.where("type", "==", type).get()).docs.map((book) => book.data())
     }
 
     public async getBooks(custom: Custom): Promise<Custom> {

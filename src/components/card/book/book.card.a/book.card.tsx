@@ -1,4 +1,5 @@
 import './book.card.scss'
+import { useState } from "react"
 import IBook from "../../../../models/book"
 import {HiOutlineHeart} from "react-icons/hi"
 import BookImg from "../../../../assets/images/ic_book.png"
@@ -19,25 +20,27 @@ export default function BookCardA(bookCardAProps: bookCardAProps): JSX.Element {
     useHeartAnimation("book" + book.id, isFavourite)
     const navigate = useNavigate()
 
+    const [inProcess, setInProcess] = useState<boolean>(false)
+
     return (
         <div id={"book" + book.id} className="book-card" onClick={() => navigate("/book/" + book.id)}>
             <a className="book-card-link">
                 <div className="book-card-container"  >
-                    <div className='favourite' onClick={(e) => {
+                    <div className='favourite' onClick={async (e) => {
                         e.stopPropagation();
                         e.preventDefault();
                         
-                        if(book.id) {
-                            console.log(isFavourite)
-                        
+                        if(book.id && !inProcess) {
+                            setInProcess(true)
                             if(isFavourite) {
-                                favouriteDal.delete(book.id)
+                                await favouriteDal.delete(book.id)
                             } else {
-                                favouriteDal.add(book.id)
+                                await favouriteDal.add(book.id)
                             }
+                            setInProcess(false)
                         }
                     }}>
-                    <HiOutlineHeart className='heart-icon'/>
+                    <HiOutlineHeart className='heart-icon' style={{color: isFavourite ? "var(--theme-color)" : "var(--color-black-smooth)"}}/>
                     
                     </div>
                     <div className='image-container'>

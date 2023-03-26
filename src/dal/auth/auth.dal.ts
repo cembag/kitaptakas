@@ -9,8 +9,13 @@ export default class AuthDal implements IAuthDal {
     private userDal = new UserDal()
 
     public async register(email: string, password: string, data: Partial<IUser>) {
-        auth.createUserWithEmailAndPassword(email, password).then((a) => {
+        auth.createUserWithEmailAndPassword(email, password).then(async (a) => {
             if(a) {
+
+                await auth.currentUser?.updateProfile({
+                    displayName: data.username ?? null,
+                })
+
                 const id = a.user!.uid
 
                 const user: IUser = {

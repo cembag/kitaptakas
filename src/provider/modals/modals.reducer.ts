@@ -17,9 +17,12 @@ export const modals = createSlice({
         },
         setTradeModal: (state: IModals, action: SetTradeModalAction) => {
             state.trade = action.payload
-        }
+        },
+        setAddBookModal: (state: IModals, action: SetModalAction) => {
+            state.addbook = action.payload
+        },
     }
 })
 
-export const {setLanguageModal, setSigninModal, setSignupModal, setTradeModal} = modals.actions
+export const {setLanguageModal, setSigninModal, setSignupModal, setTradeModal, setAddBookModal} = modals.actions
 export default modals.reducer
