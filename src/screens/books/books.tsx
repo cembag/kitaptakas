@@ -61,10 +61,6 @@ export default function Books(): JSX.Element {
     const bookDal = new BookDal()
 
     const filtersInitialState: FilterState = {
-        local: {
-            for: "book",
-            title: "",
-        },
         client: {
             type: [],
             condition: "",
@@ -73,7 +69,8 @@ export default function Books(): JSX.Element {
             number_of_pages: {
                 min: "",
                 max: ""
-            }
+            },
+            for: "title"
         }
     }
     const bookFetchingInitialState: Custom = {

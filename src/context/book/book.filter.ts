@@ -1,19 +1,16 @@
 import { BookCondition, BookLegibility } from "../../models/book"
 import { BookType } from "./book.types"
 
-export type FilterFor = typeof localFor[number]
+export type FilterFor = typeof filterFor[number]
 
-const localFor = [
-    "book",
+const filterFor = [
+    "title",
     "author"
 ] as const
 
 export type FilterState = {
-    local: {
-        for: FilterFor,
-        title: string,
-    },
     client: {
+        for: FilterFor
         type: BookType[],
         condition: BookCondition | "",
         legibility: BookLegibility | "",

@@ -4,7 +4,6 @@ import IBook from "../../../../models/book"
 import {HiOutlineHeart} from "react-icons/hi"
 import BookImg from "../../../../assets/images/ic_book.png"
 import FavouriteDal from '../../../../dal/favourite/favourite.dal'
-import useHeartAnimation from '../../../../common/use.heart.animation'
 import { useNavigate } from 'react-router-dom'
 
 
@@ -17,7 +16,6 @@ export default function BookCardA(bookCardAProps: bookCardAProps): JSX.Element {
 
     const {book, isFavourite} = bookCardAProps
     const favouriteDal = new FavouriteDal()
-    useHeartAnimation("book" + book.id, isFavourite)
     const navigate = useNavigate()
 
     const [inProcess, setInProcess] = useState<boolean>(false)
@@ -40,7 +38,7 @@ export default function BookCardA(bookCardAProps: bookCardAProps): JSX.Element {
                             setInProcess(false)
                         }
                     }}>
-                    <HiOutlineHeart className='heart-icon' style={{color: isFavourite ? "var(--theme-color)" : "var(--color-black-smooth)"}}/>
+                    <HiOutlineHeart className='heart-icon' style={{color: isFavourite ? "var(--theme-color)" : "var(--color-black-smooth)", fill: isFavourite ? "var(--theme-color)" : "white"}}/>
                     
                     </div>
                     <div className='image-container'>

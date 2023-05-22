@@ -10,12 +10,12 @@ export default function useListenUserFavourites() {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
+        dispatch(setFavourites([]));
         let favouritesDisposable: (() => void) | null = null
 
         if(authUser) {
             const id = authUser.uid;
             favouritesDisposable = dbModel.users.doc(id).collection("favourites").onSnapshot((snapshot) => {
-                dispatch(setFavourites([]));
                 snapshot.docChanges().forEach((change) => {
                     if(change.type === "added") {
                         dispatch(addToFavourites(change.doc.id))

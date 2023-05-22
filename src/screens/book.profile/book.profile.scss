@@ -23,7 +23,7 @@
                 aspect-ratio: 5/7;
                 padding: 20px;
 
-                img {
+                .image {
                     width: 100%;
                     aspect-ratio: 5/7;
                     height: 100%;
@@ -168,7 +168,7 @@
                 }
             }
     
-            .owner-wrapper {
+            .owner {
                 height: 100%;
                 width: 300px;
                 border-left: 1px solid var(--border-color);
@@ -177,7 +177,7 @@
     
                 .container {
                     width: 100%;
-                    padding: 10px 20px;
+                    padding: 20px;
     
                     &:not(:last-child) {
                         border-bottom: 1px solid var(--border-color);
@@ -212,6 +212,74 @@
                     span {
                         font-weight: 300;
                         font-size: 13px;
+                    }
+                }
+            }
+        }
+        
+        .skeletion {
+            figure {
+                .image {
+                    background: rgb(230,230,230);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    
+                    .icon {
+                        width: 35px;
+                        height: 35px;
+                        color: rgb(200,200,200);
+                        animation: anim 1s ease infinite;
+                    }
+                }
+            }
+            
+            .book {
+                header {
+                    height: 100px;
+                    border-radius: 7px;
+                    background: rgb(230,230,230);
+                }
+                
+                .attributes-wrapper {
+                    .attributes-container {
+                        height: 160px;
+                    }
+                }
+                
+                .buttons {
+                    border-radius: 7px;
+                    background: rgb(230,230,230);
+                }
+            }
+            
+            .owner {
+                header {
+                    height: 100px;
+                    
+                    .name {
+                        width: 100%;
+                        height: 30px;
+                        border-radius: 7px;
+                        background: rgb(230,230,230);
+                    }
+                    
+                    .trades {
+                        margin-top: 10px;
+                        width: 100%;
+                        height: 22px;
+                        border-radius: 7px;
+                        background: rgb(230,230,230);
+                    }
+                }
+                
+                .bio {
+                    span {
+                        display: block;
+                        width: 100%;
+                        height: 120px;
+                        border-radius: 7px;
+                        background: rgb(230,230,230);
                     }
                 }
             }
@@ -267,6 +335,11 @@
                 //     transition: background .3s ease;
                 // }
                 
+                .card-skeletion {
+                    width: 160px;
+                    min-width: 160px;
+                }
+                
                 .book-card {
                     width: 160px;
                     min-width: 160px;
@@ -287,7 +360,7 @@
                 height: min-content;
                 flex-direction: column !important;
 
-                .owner-wrapper {
+                .owner {
                     width: 100%;
                     height:min-content;
                     border-left: none;
@@ -317,5 +390,17 @@
                 }
             }
         }
+    }
+}
+
+@keyframes anim {
+    0% {
+        scale: 1;
+    } 40% {
+        scale: .85;
+    } 80% {
+        scale: 1.05;
+    } 100% {
+        scale: 1;
     }
 }

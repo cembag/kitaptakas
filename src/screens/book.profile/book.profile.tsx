@@ -2,7 +2,6 @@ import "./book.profile.scss"
 import { useEffect, useState } from "react"
 import BookDal from "../../dal/book/book.dal"
 import IBook from "../../models/book"
-import { RiUserFill } from "react-icons/ri" 
 import { useAppDispatch, useTypedSelector } from "../../provider/store"
 import DateService from "../../services/date/date.service"
 import { FcOvertime } from "react-icons/fc"
@@ -13,18 +12,20 @@ import useListenUserFavourites from "../../hooks/use.listen.user.favourites"
 import useListenBookFavourites from "../../hooks/use.listen.book.favourites"
 import BookCardA from "../../components/card/book/book.card.a/book.card"
 import { setTradeModal } from "../../provider/modals/modals.reducer"
+import { GiOpenBook } from "react-icons/gi"
+import BookCardASkeletion from "../../components/card/book/book.card.a/book.card.a.skeletion"
 
-const heartScale = [
-    { transform: " scale(.2)" },
-    { transform: " scale(1.1)" },
-    { transform: " scale(.95)" },
-    { transform: " scale(1)" },
-];
+// const heartScale = [
+//     { transform: " scale(.2)" },
+//     { transform: " scale(1.1)" },
+//     { transform: " scale(.95)" },
+//     { transform: " scale(1)" },
+// ];
 
-const heartTiming = {
-    duration: 400,
-    iterations: 1,
-};
+// const heartTiming = {
+//     duration: 400,
+//     iterations: 1,
+// };
 
 export default function BookProfile(): JSX.Element {
 
@@ -48,43 +49,22 @@ export default function BookProfile(): JSX.Element {
     }, [window.location.pathname])
 
     useEffect(() => {
-        if (book && globalUser) {
-            const bookPage = document.getElementById("book")
-
-            if (bookPage) {
-
-                const heartIcon = bookPage.querySelector(".heart-icon")
-
-                if (heartIcon) {
-                    if (globalUser.favourites.includes(book.id)) {
-                        heartIcon.setAttribute("fill", "var(--theme-color)")
-                        heartIcon.animate(heartScale, heartTiming)
-                    } else {
-                        heartIcon.setAttribute("fill", "white")
-                    }
-                }
-            }
-        }
-
-    }, [book && globalUser && globalUser.favourites.length])
-
-    useEffect(() => {
         console.log(bookFavouriteData.count)
     }, [bookFavouriteData.count])
 
     return (
         <div id="book-page" className="page">
 
-            {
-                book && (
-                    <section id="book">
+            <section id="book">
+                {
+                    book ? (
                         <div className="book-container" onClick={async () => {
                             const favourites = (await rDb.ref("users/" + globalUser.user!.id + "/favourites").get()).val()
                             console.log(favourites)
                         }}>
                             <figure>
-                                {book.images && book.images.length > 0 && <img src={book.images[0]} alt="" />}
-                                {!book.images || book.images.length === 0 && <img src={require("../../assets/images/ic_book.png")} alt="" />}
+                                {book.images && book.images.length > 0 && <img className="image" src={book.images[0]} alt="" />}
+                                {!book.images || book.images.length === 0 && <img className="image" src={require("../../assets/images/ic_book.png")} alt="" />}
                             </figure>
                             <div className="book">
                                 <header>
@@ -94,7 +74,6 @@ export default function BookProfile(): JSX.Element {
                                         <div className="date attribute">
                                             <FcOvertime className="date-icon icon" />
                                             <span>{dateService.getDayAndMonthFromDate(dateService.getDateFromFirestore(book.created_at), language)}</span>
-                                            {/* <span>{dateService.showTime(dateService.getDateFromFirestore(book.created_at))}</span> */}
                                         </div>
 
                                         <div className="favourites attribute">
@@ -102,12 +81,14 @@ export default function BookProfile(): JSX.Element {
                                                 e.stopPropagation();
                                                 e.preventDefault();
 
+                                                console.log(globalUser.favourites)
+
                                                 if (globalUser && globalUser.favourites.includes(book.id)) {
                                                     favouriteDal.delete(book.id)
                                                 } else {
                                                     favouriteDal.add(book.id)
                                                 }
-                                            }} style={{ color: globalUser && globalUser.favourites.includes(book.id) ? "var(--theme-color)" : "#78909C" }} />
+                                            }} style={{ color: globalUser && globalUser.favourites.includes(book.id) ? "var(--theme-color)" : "#78909C", fill: globalUser && globalUser.favourites.includes(book.id) ? "var(--theme-color)" : "white" }} />
                                             <span>{bookFavouriteData.count}</span>
                                             <div className="">
 
@@ -160,7 +141,7 @@ export default function BookProfile(): JSX.Element {
                                     </button>
                                 </div>
                             </div>
-                            <div className="owner-wrapper">
+                            <div className="owner">
 
                                 <header className="container">
                                     <span className="name">Cem Hakkı Bağ</span>
@@ -175,35 +156,73 @@ export default function BookProfile(): JSX.Element {
                                 </div>
                             </div>
                         </div>
-                    </section>
-                )
-            }
+                    ) : (
+                        <div className="book-container skeletion">
+                            <figure>
+                                <div className="image">
+                                    <GiOpenBook className="icon" />
+                                </div>
+                            </figure>
+                            <div className="book">
+                                <header></header>
+                                <div className="attributes-wrapper">
+                                    <div className="attributes-container"></div>
+                                </div>
+                                <div className="space"></div>
+                                <div className="buttons"></div>
+                            </div>
+                            <div className="owner">
+                                <header className="container">
+                                    <span className="name"></span>
+                                    <span className="trades"></span>
+                                </header>
+                                <div className="bio container">
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                }
+            </section>
 
             <section id="recommended">
                 <div className="recommended-container">
                     <h2>Recommended for you</h2>
                     <div className="books">
                         {
-                            book && (
+                            book ? (
                                 <>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
-                                <BookCardA book={book} isFavourite={false}/>
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                    <BookCardA book={book} isFavourite={false} />
+                                </>
+                            ) : (
+                                <>
+                                    <BookCardASkeletion />
+                                    <BookCardASkeletion />
+                                    <BookCardASkeletion />
+                                    <BookCardASkeletion />
+                                    <BookCardASkeletion />
+                                    <BookCardASkeletion />
+                                    <BookCardASkeletion />
+                                    <BookCardASkeletion />
+                                    <BookCardASkeletion />
+                                    <BookCardASkeletion />
                                 </>
                             )
                         }

@@ -15,14 +15,12 @@ const languages: {[key in LanguageType]: {
         find_book: "Find book",
         login: "Login",
         signup: "Sign up",
-
     },
     tr: {
         find_book: "Aradığınız kitabı bulun",
         login: "Giriş yap",
         signup: "Kayıt ol",
     },
-    
 }
 
 export default languages

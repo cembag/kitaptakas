@@ -1,4 +1,3 @@
-import React from "react";
 import "./sss.scss";
 import { useState } from "react";
 

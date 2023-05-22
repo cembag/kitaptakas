@@ -30,7 +30,6 @@ export default class BookDal implements IBookDal {
             }
             
             const querySnapshot = await query.startAfter(custom.startAfter).limit(this.limit).get()
-            
             this.getCustom(querySnapshot, custom)
         } else {
             let query: firebase.firestore.Query<IBook> = dbModel.books
@@ -44,7 +43,22 @@ export default class BookDal implements IBookDal {
         }
 
         custom.fetching = false
+        
+        return custom
+    }
+    
+    private getCustom(snapshot: firebase.firestore.QuerySnapshot<IBook>, custom: Custom): Custom {
+        if(snapshot.docs.length < this.limit) {
+            custom.fetched = true
+        }
 
+        snapshot.docs.forEach((book, index) => {
+            if((index + 1) === snapshot.docs.length) {
+                custom.startAfter = book
+            }
+
+            custom.books.push(book.data())
+        })
         return custom
     }
     
@@ -73,21 +87,6 @@ export default class BookDal implements IBookDal {
         }
     
         return query
-    }
-
-    private getCustom(snapshot: firebase.firestore.QuerySnapshot<IBook>, custom: Custom): Custom {
-        if(snapshot.docs.length < this.limit) {
-            custom.fetched = true
-        }
-
-        snapshot.docs.forEach((book, index) => {
-            if((index + 1) === snapshot.docs.length) {
-                custom.startAfter = book
-            }
-
-            custom.books.push(book.data())
-        })
-        return custom
     }
 
     public async getBook(id: string): Promise<IBook> {

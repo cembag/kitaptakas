@@ -21,7 +21,6 @@ export default function useListenUser() {
             
             userDisposable = dbModel.users.doc(uid).onSnapshot((userSnapshot) => {
                 const user = userSnapshot.data() as IUser
-                console.log("USER UPDATED: ", user)
                 dispatch(setUser(user))
             })
             

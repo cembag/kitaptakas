@@ -28,7 +28,7 @@ export default class FavouriteDal {
         const id = auth.currentUser!.uid
 
         await dbModel.users.doc(id).collection("favourites").doc(bookId).set({created_at: new Date()})
-        await dbModel.users.doc(bookId).collection("favourites").doc(id).set({created_at: new Date()})
+        await dbModel.books.doc(bookId).collection("favourites").doc(id).set({created_at: new Date()})
         await rDb.ref(`metadatas/count/users/${id}/favourites`).set(firebase.database.ServerValue.increment(1));
         await rDb.ref(`metadatas/count/books/${bookId}/favourites`).set(firebase.database.ServerValue.increment(1));
     }
@@ -43,7 +43,7 @@ export default class FavouriteDal {
         const id = auth.currentUser!.uid
 
         await dbModel.users.doc(id).collection("favourites").doc(bookId).delete()
-        await dbModel.users.doc(bookId).collection("favourites").doc(id).delete()
+        await dbModel.books.doc(bookId).collection("favourites").doc(id).delete()
         await rDb.ref(`metadatas/count/users/${id}/favourites`).set(firebase.database.ServerValue.increment(-1));
         await rDb.ref(`metadatas/count/books/${bookId}/favourites`).set(firebase.database.ServerValue.increment(-1));
     }

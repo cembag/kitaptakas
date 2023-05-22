@@ -12,6 +12,7 @@ import useTranslation from "../../translation/use.translation"
 import BookCardASkeletion from "../../components/card/book/book.card.a/book.card.a.skeletion"
 import { useTypedSelector } from "../../provider/store"
 import bookWords from "../../context/book/book.words"
+import useListenUserFavourites from "../../hooks/use.listen.user.favourites"
 
 export default function Home(): JSX.Element {
 
@@ -19,7 +20,7 @@ export default function Home(): JSX.Element {
     const navigate = useNavigate()
     const {value, toggle} = useToggle()
     const bookDal = new BookDal()
-    //const users = React.useContext(FirebaseAuthContext)
+    useListenUserFavourites()
 
     const [bookFetchingState, setBookFetchingState] = useState<Custom>({
         startAfter: undefined,
@@ -74,7 +75,7 @@ export default function Home(): JSX.Element {
                             <input type="text" onChange={handleSearchInput} value={searchInputState.value} onFocus={() => setSearchInputState(prev => ({...prev, isFocused: true}))} onBlur={() => setSearchInputState(prev => ({...prev, isFocused: false}))}/>
                         </div>
                     </div>
-                    <button onClick={() => navigate("/filter_book")}>Kitap ismine göre arayın</button>
+                    <button onClick={() => navigate("/books")}>Kitap ismine göre arayın</button>
                 </div>
             </section>
 
