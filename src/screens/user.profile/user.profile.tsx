@@ -480,6 +480,7 @@ function Favourites({ isSelected }: { isSelected: boolean }): JSX.Element {
     })
 
     const getFavouriteBooks = useCallback(async () => {
+        setFavouritesFetchState(prev => ({...prev, fetching: true}))
         const newFetchState = await favouriteDal.get(favouritesFetchState)
         setFavouritesFetchState(newFetchState)
     }, [])

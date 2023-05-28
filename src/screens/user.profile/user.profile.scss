@@ -618,7 +618,6 @@
                         overflow: hidden;
                         grid-gap: 2px;
 
-
                         @include break_1000 {
                             grid-template-columns: repeat(4,1fr);
                         }
