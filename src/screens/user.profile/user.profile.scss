@@ -16,6 +16,12 @@
     }
 }
 
+@mixin break_1200 {
+    @media screen and (max-width: 1200px) {
+        @content
+    }
+}
+
 #profile-page{
     display: flex;
     justify-content: center;
@@ -354,8 +360,69 @@
                         color: var(--color-gray-storm);
                     }
 
-                    .books {
+                    .books-contentt {
+                        display: flex;
                         margin-top: 20px;
+
+                        .books {
+                            display: grid;
+                            grid-template-columns: repeat(5,1fr);
+                            border-radius: 7px;
+                            overflow: hidden;
+                            grid-gap: 2px;
+                            @include break_1000 {
+                                grid-template-columns: repeat(4,1fr);
+                            }
+                            @include break_750 {
+                                grid-template-columns: repeat(3,1fr);
+                            }
+                            @include break_500 {
+                                grid-template-columns: repeat(2,1fr);
+                            }
+                        }
+
+                        .book-card {
+
+                            &:hover {
+                                a {
+                                    .book-card-container{
+
+                                        .remove {
+                                            opacity: 1;
+                                        }
+                                    }
+                                }
+                            }
+
+                            a {
+                                .book-card-container {
+                                    background-color: rgb(250,250,250);
+
+                                    .remove {
+                                        width: 26px;
+                                        height: 26px;
+                                        border-radius: 50%;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        position: absolute;
+                                        top: 14px;
+                                        left: 14px;
+                                        z-index: 10;
+                                        background-color: red;
+                                        cursor: pointer;
+                                        transition: opacity .2s ease;
+                                        opacity: 0;
+
+                                        .icon {
+                                            width: 14px;
+                                            height: 14px;
+                                            color: white;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -401,21 +468,15 @@
                     .offers {
                         width: 100%;
                         display: grid;
-                        grid-template-columns: repeat(1, 1fr);
+                        grid-template-columns: repeat(2, 1fr);
                         margin-top: 20px;
                         grid-gap: 20px;
-                        @include break_750 {
-                            grid-template-columns: repeat(2,1fr);
-                        }
-
-                        @include break_500 {
+                        @include break_1200 {
                             grid-template-columns: repeat(1,1fr);
                         }
-                        
 
                         .offer {
                             display: flex;
-                            flex-direction: column;
                             padding: 20px;
                             border: 1px solid var(--border-color);
                             border-radius: 7px;
@@ -427,9 +488,13 @@
                                 align-items: center;
 
                                 article {
-                                    width: 120px;
+                                    max-width: 180px;
                                     display: flex;
                                     flex-direction: column;
+
+                                    &:not(:last-child) {
+                                        margin-right: 20px;
+                                    }
 
                                     h4 {
                                         font-size: 13px;
@@ -437,45 +502,60 @@
                                         color: var(--color-black-smooth);
                                     }
 
-                                    figure {
-                                        width: 60px;
-                                        aspect-ratio: 5/7;
-                                        border-radius: 7px;
-                                        position: relative;
-                                        overflow: hidden;
-                                        margin-top: 5px;
-        
-                                        img {
-                                            width: 100%;
+                                    .book-a {
+                                        width: 100%;
+                                        height: 100%;
+                                        display: flex;
+                                        align-items: flex-end;
+
+                                        figure {
+                                            width: 70px;
+                                            min-width: 70px;
+                                            background-color:rgb(240,240,240);
+                                            aspect-ratio: 5/7;
                                             border-radius: 7px;
-                                            filter: brightness(90%);
+                                            position: relative;
+                                            overflow: hidden;
+                                            margin-top: 10px;
+                                            margin-right: 5px;
+            
+                                            img {
+                                                width: 100%;
+                                                height: 100%;
+                                                border-radius: 7px;
+                                                filter: brightness(90%);
+                                            }
+            
+                                            
                                         }
-        
+    
                                         .book-attributes {
                                             width: 100%;
                                             display: flex;
+                                            flex-direction: column;
                                             flex-direction: co  lumn;
                                             padding: 10px 5px;
                                             border-radius: 7px;
+
+                                            .title, .author {
+                                                overflow: hidden;
+                                                text-overflow: ellipsis;
+                                                display: -webkit-box;
+                                                -webkit-line-clamp: 2;
+                                                line-clamp: 2;
+                                                -webkit-box-orient: vertical;
+                                            }
         
                                             .title {
-                                                color: white;
+                                                color: var(--color-black-smooth);
                                                 font-weight: 600;
                                                 font-size: 13px;
-                                                text-overflow: ellipsis;
-                                                white-space: nowrap;
-                                                overflow: hidden;
-    
                                             }
         
                                             .author {
-                                                color: rgb(230,230,230);
+                                                color: var(--color-gray-storm);
                                                 font-weight: 400;
                                                 font-size: 12px;
-                                                text-overflow: ellipsis;
-                                                white-space: nowrap;
-                                                overflow: hidden;
-    
                                             }
                                         }
                                     }
@@ -492,9 +572,12 @@
 
                             .actions {
                                 width: 100%;
-                                height: 35px;
+                                max-width: 80px;
+                                min-width: 80px;
                                 display: flex;
+                                flex-direction: column;
                                 margin-top: 20px;
+                                grid-gap: 10px;
 
                                 button {
                                     flex: 1;
@@ -513,7 +596,6 @@
 
                                 .accept {
                                     background: #009900;
-                                    margin-right: 5px;
                                 }
 
                                 .deny {
@@ -535,6 +617,8 @@
                         border-radius: 7px;
                         overflow: hidden;
                         grid-gap: 2px;
+
+
                         @include break_1000 {
                             grid-template-columns: repeat(4,1fr);
                         }
@@ -544,6 +628,7 @@
                         @include break_500 {
                             grid-template-columns: repeat(2,1fr);
                         }
+                     
                     }
                 }
             }

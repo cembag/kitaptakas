@@ -7,80 +7,83 @@ import BookType, { bookTypes } from "../../../context/book/book.types";
 import { BookCondition, BookConditions, BookLanguage, BookLanguages, BookLegibilites, BookLegibility } from "../../../models/book";
 import { setAddBookModal } from "../../../provider/modals/modals.reducer";
 import { useAppDispatch, useTypedSelector } from "../../../provider/store";
-import { auth, rDb } from "../../../config/firebase";
 import { Rings } from "react-loader-spinner"
-
-
+import BookDal from "../../../dal/book/book.dal";
 
 type AddBook = {
-    images: string[]
+    images: (string | ArrayBuffer | null)[]
     title: string
     author: string
-    condition: BookCondition | null
-    legibility: BookLegibility | null
-    number_of_pages: number | null
-    language: BookLanguage | null
-    type: BookType | null
+    condition: BookCondition
+    legibility: BookLegibility
+    number_of_pages: number
+    language: BookLanguage
+    type: BookType
     in_process: boolean
 }
 
 export default function AddBookModal(): JSX.Element {
 
+    const bookDal = new BookDal();
     const dispatch = useAppDispatch()
     const modal = useTypedSelector(state => state.modals.addbook)
     const initialBook: AddBook = {
         images: [],
         title: "",
         author: "",
-        condition: null,
-        legibility: null,
-        number_of_pages: null,
-        language: null,
-        type: null,
+        condition: "Good",
+        legibility: "Legible",
+        number_of_pages: 0,
+        language: "Tr",
+        type: "Autobiography",
         in_process: false
     }
-    const [addBookState, setAddBookState] = useState<AddBook>(initialBook)
+    const [addBookState, setAddBookState] = useState<AddBook>(initialBook);
 
-    function convertFile(file: File) {
-        const fileType: string = file.type
-        const reader = new FileReader()
-        reader.readAsBinaryString(file)
-        reader.onload = (ev: any) => {
-            setAddBookState(prev => ({...prev, images: [...prev.images, `data:${fileType};base64,${btoa(ev.target.result)}`]}))
-        }
+    const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const data = new FileReader()
+        data.addEventListener("load", () => setAddBookState(prev => ({...prev, images: [...prev.images, data.result]})));
+        data.readAsDataURL(e.target.files![0]);
     }
-
-    const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => convertFile((e.target as HTMLInputElement).files![0])
+    //const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => setAddBookState(prev => ({...prev, images: [...prev.images, (e.target as HTMLInputElement).files![0]]}));
 
     async function addBook() {
-        setAddBookState(prev => ({...prev, in_process: true}))
-        await rDb.ref("reviews/books").push({
+        setAddBookState(prev => ({...prev, in_process: true}));
+        await bookDal.addBook({
             id: "",
+            images: addBookState.images as string[],
             title: addBookState.title,
             author: addBookState.author,
-            images: addBookState.images,
-            condition: addBookState.condition as BookCondition,
-            legibility: addBookState.legibility as BookLegibility,
-            type: addBookState.type as BookType,
-            language: addBookState.language as BookLanguage,
-            number_of_pages: addBookState.number_of_pages as number,
+            condition: addBookState.condition,
+            legibility: addBookState.legibility,
+            language: addBookState.language,
+            number_of_pages: addBookState.number_of_pages,
+            type: addBookState.type,
             has_missing_page: false,
+            publisher: "",
+            shared_by: firebase.auth().currentUser!.uid,
             created_at: firebase.firestore.Timestamp.fromDate(new Date()),
-            owner: auth.currentUser!.uid
-        })
-        setAddBookState(initialBook)
+        });
+        setAddBookState(initialBook);
+        dispatch(setAddBookModal(false));
     }
 
     return (
         <>{
             modal && (
-                <div className="modal-bg" onClick={() => dispatch(setAddBookModal(false))}>
+                <div className="modal-bg" onClick={() => {
+                    dispatch(setAddBookModal(false));
+                    setAddBookState(initialBook);
+                }}>
                     <div id="addbook-modal" className="modal" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-container">
                             <header>
                                 <div className="empty"></div>
                                 <h2>Add Book</h2>
-                                <div className="close-button" onClick={() => dispatch(setAddBookModal(false))}>
+                                <div className="close-button" onClick={() => {
+                                    dispatch(setAddBookModal(false));
+                                    setAddBookState(initialBook);
+                                }}>
                                     <CgClose className="close-icon" />
                                 </div>
                             </header>
@@ -93,7 +96,8 @@ export default function AddBookModal(): JSX.Element {
                                             addBookState.images.length > 0 && addBookState.images.map((image, index) => {
                                                 return (
                                                     <figure>
-                                                        <img key={index} src={image} alt="" />
+                                                        {/* {image.name} */}
+                                                        <img src={image as string} alt="" />
                                                         <button type="button" onClick={() => setAddBookState(prev => {
                                                             prev.images.splice(index, 1)
                                                             return {...prev, images: prev.images}
@@ -118,7 +122,7 @@ export default function AddBookModal(): JSX.Element {
                                         <ImageImg className="icon"/>
                                         <span>Add image</span>
                                     </label>
-                                    <input id="book-image" type="file" onChange={handleFile}/>
+                                    <input id="book-image" type="file" onChange={handleImage}/>
                                 </div>
 
                                 <label htmlFor="book-title">Title</label>

@@ -55,7 +55,8 @@ export default function SigninModal(): JSX.Element {
                                     e.stopPropagation();
                                 
                                     if(isValidEmail(email) && password.length > 6) {
-                                        await authDal.signIn(email, password)
+                                        await authDal.signIn(email, password);
+                                        dispatch(setSigninModal(false));
                                     }
                                 }}>{translation.login}</button>
                             </form>

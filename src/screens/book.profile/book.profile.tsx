@@ -14,18 +14,8 @@ import BookCardA from "../../components/card/book/book.card.a/book.card"
 import { setTradeModal } from "../../provider/modals/modals.reducer"
 import { GiOpenBook } from "react-icons/gi"
 import BookCardASkeletion from "../../components/card/book/book.card.a/book.card.a.skeletion"
-
-// const heartScale = [
-//     { transform: " scale(.2)" },
-//     { transform: " scale(1.1)" },
-//     { transform: " scale(.95)" },
-//     { transform: " scale(1)" },
-// ];
-
-// const heartTiming = {
-//     duration: 400,
-//     iterations: 1,
-// };
+import dbModel from "../../utils/db.model"
+import { useLocation } from "react-router-dom";
 
 export default function BookProfile(): JSX.Element {
 
@@ -33,20 +23,25 @@ export default function BookProfile(): JSX.Element {
     const favouriteDal = new FavouriteDal()
     const dateService = new DateService()
     const [book, setBook] = useState<IBook | undefined>()
+    const [recommendedBooks, setRecommendedBooks] = useState<IBook[]>([])
     const bookDal = new BookDal()
     const { language, globalUser } = useTypedSelector(state => state)
     const bookFavouriteData = useListenBookFavourites(book && book.id)
+    const location = useLocation();
 
     useListenUserFavourites()
 
     useEffect(() => {
 
-        const path = window.location.pathname
+        const path = location.pathname
         const bookId = path.substring((path.indexOf("book/") + 5), path.length)
 
-        bookDal.getBook(bookId).then(book => setBook(book))
+        bookDal.getBook(bookId).then(book => {
+            setBook(book)
+            dbModel.books.where("type", "==", book.type).get().then((books) => books.docs.forEach(book => setRecommendedBooks(prev => ([...prev, book.data()]))))
+        })
 
-    }, [window.location.pathname])
+    }, [location.pathname])
 
     useEffect(() => {
         console.log(bookFavouriteData.count)
@@ -101,31 +96,31 @@ export default function BookProfile(): JSX.Element {
                                     <div className="attributes-container">
                                         <div className="attribute">
                                             <span className="name">Ürün kodu</span>
-                                            <span className="value">3CUfi3</span>
+                                            <span className="value">{book.id.substring(0,6)}</span>
                                         </div>
                                         <div className="attribute">
                                             <span className="name">Kategori</span>
-                                            <span className="value">Masal</span>
+                                            <span className="value">{book.type}</span>
                                         </div>
                                         <div className="attribute">
                                             <span className="name">Dil</span>
-                                            <span className="value">Türkçe</span>
+                                            <span className="value">{book.language}</span>
                                         </div>
                                         <div className="attribute">
                                             <span className="name">Sayfa sayısı</span>
-                                            <span className="value">125</span>
+                                            <span className="value">{book.number_of_pages}</span>
                                         </div>
                                         <div className="attribute">
                                             <span className="name">Yayıncı</span>
-                                            <span className="value">Yayınevleri</span>
+                                            <span className="value">{book.publisher}</span>
                                         </div>
                                         <div className="attribute">
                                             <span className="name">Okunabilirlik</span>
-                                            <span className="value">Okunur</span>
+                                            <span className="value">{book.legibility}</span>
                                         </div>
                                         <div className="attribute">
                                             <span className="name">Durum</span>
-                                            <span className="value">İyi</span>
+                                            <span className="value">{book.condition}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -135,9 +130,6 @@ export default function BookProfile(): JSX.Element {
                                 <div className="buttons">
                                     <button className="trade-button" onClick={() => dispatch(setTradeModal(book.id))}>
                                         Trade
-                                    </button>
-                                    <button className="profile-button">
-                                        See profile
                                     </button>
                                 </div>
                             </div>
@@ -190,27 +182,12 @@ export default function BookProfile(): JSX.Element {
                     <h2>Recommended for you</h2>
                     <div className="books">
                         {
-                            book ? (
-                                <>
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                    <BookCardA book={book} isFavourite={false} />
-                                </>
+                            (book && recommendedBooks.length > 0) ? (
+                                recommendedBooks.map(book => {
+                                    return (
+                                        <BookCardA book={book} isFavourite={false}/>
+                                    )
+                                })
                             ) : (
                                 <>
                                     <BookCardASkeletion />

@@ -92,23 +92,26 @@ export default function AddBook(): JSX.Element {
 
             <div style={{width: "200px", height: "40px", borderRadius: "7px", background: "black", color: "white", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "center"}}
             onClick={async () => {
-                await bookDal.addBook({
-                id: "default",
-                title: book.title!,
-                author: book.author!,
-                publisher: book.publisher!,
-                language: book.language!,
-                condition: book.condition!,
-                legibility: book.legibility!,
-                has_missing_page: false,
-                number_of_pages: book.number_of_pages!,
-                type: book.type!,
-                created_at: firebase.firestore.Timestamp.fromDate(new Date()),
-                images: book.images!,
-                owner: auth.currentUser!.uid
-                })
+
                 
-                setBook(initialBook)
+
+                // await bookDal.addBook({
+                // id: "default",
+                // title: book.title!,
+                // author: book.author!,
+                // publisher: book.publisher!,
+                // language: book.language!,
+                // condition: book.condition!,
+                // legibility: book.legibility!,
+                // has_missing_page: false,
+                // number_of_pages: book.number_of_pages!,
+                // type: book.type!,
+                // created_at: firebase.firestore.Timestamp.fromDate(new Date()),
+                // images: book.images!,
+                // shared_by: auth.currentUser!.uid
+                // })
+                
+                // setBook(initialBook)
             }}>
                 Add book
             </div>

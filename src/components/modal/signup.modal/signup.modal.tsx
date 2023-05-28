@@ -76,7 +76,8 @@ export default function SignupModal(): JSX.Element {
                                     if(isValidEmail(email) && password.length > 6) {
                                         try {
                                             setRunning(true)
-                                            await authDal.register(email, password, {username: username})
+                                            await authDal.register(email, password, {username: username});
+                                            dispatch(setSignupModal(false));
                                         } catch (error) {
                                             console.log(error)
                                         }

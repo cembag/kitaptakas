@@ -75,7 +75,7 @@ export default function Home(): JSX.Element {
                             <input type="text" onChange={handleSearchInput} value={searchInputState.value} onFocus={() => setSearchInputState(prev => ({...prev, isFocused: true}))} onBlur={() => setSearchInputState(prev => ({...prev, isFocused: false}))}/>
                         </div>
                     </div>
-                    <button onClick={() => navigate("/books")}>Kitap ismine göre arayın</button>
+                    <button onClick={() => navigate("/books", {state: {title: searchInputState.value}})}>Kitap ismine göre arayın</button>
                 </div>
             </section>
 
@@ -86,7 +86,7 @@ export default function Home(): JSX.Element {
                         {
                             bookTypes.map((bookType, index) => {
                                 return (
-                                    <a href="" key={index} className="category noselect">
+                                    <a href="" key={index} className="category noselect" onClick={() => navigate("/books", {state: {category: bookType}})}>
                                         <div data-testid="link" className="category-wrapper">
                                             <a className="category-link">
                                                 <figure className="image-wrapper">

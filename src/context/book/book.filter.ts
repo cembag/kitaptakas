@@ -18,6 +18,7 @@ export type FilterState = {
             min: string,
             max: string
         },
+        title: string
         has_missing_page?: boolean
     }
 }

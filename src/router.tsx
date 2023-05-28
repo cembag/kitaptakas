@@ -33,11 +33,11 @@ export default function Router(): JSX.Element {
             <Route path="/" element={<Navigate to="/home" replace={true}/>}/>
             <Route path="/books" element={<Books/>}/>
             <Route path="/profile" element={<ProtectedRoute><UserProfile/></ProtectedRoute>}/>
-            <Route path="*/profile" element={<UserProfile/>}/>
+            <Route path="*/profile"  element={<UserProfile/>}/>
             <Route path="/book/*" element={<BookProfile/>}/>
             <Route path="/home" element={<Home/>}/>
             <Route path="*" element={<NotFound/>}/>
-            <Route path="/Sss" element={<Sss/>}/>
+            <Route path="/sss" element={<Sss/>}/>
         </Routes>
     )
 }

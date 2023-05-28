@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import "./sss.scss";
 import { useState } from "react";
 
@@ -9,7 +10,8 @@ const Headers = [
   "Kişisel Verilerin Korunması"
 ];
 export default function Sss(): JSX.Element {
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const { state } = useLocation();
+  const [currentIndex, setCurrentIndex] = useState<number>(state.index ? state.index : 0);
 
   return (
     <div id="Sss" className="page">

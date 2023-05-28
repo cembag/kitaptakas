@@ -17,6 +17,8 @@ const dbModel = {
     books: dataPoint<IBook>("books"),
     trades: dataPoint<ITrade>("trades"),
     errors: dataPoint<IError>("errors"),
+    userBooks: (userId: string) => dataPoint<IBook>("users/" + userId + "/books"),
+    userTrades: (userId: string) => dataPoint<ITrade>("users/" + userId + "/trades"),
 }
 
 export default dbModel

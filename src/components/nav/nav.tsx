@@ -38,10 +38,10 @@ export default function Nav(): JSX.Element {
                         }} style={{right: width > 1400 ? Math.abs(((width - 1400) / 2) + 5) + "px" : "15px"}}>
                             <span className="signed-as">Signed in as <b>{globalUser.user!.username}</b></span>
                             <ol>
-                                <li onClick={() => navigate("/profile")}><span>Your profile</span></li>
-                                <li><span>Your books</span></li>
-                                <li><span>Your trades</span></li>
-                                <li><span>Your favourites</span></li>
+                                <li onClick={() => navigate("/profile", {state: {index: 0}})}><span>Your profile</span></li>
+                                <li onClick={() => navigate("/profile", {state: {index: 1}})}><span>Your books</span></li>
+                                <li onClick={() => navigate("/profile", {state: {index: 2}})}><span>Your trades</span></li>
+                                <li onClick={() => navigate("/profile", {state: {index: 3}})}><span>Your favourites</span></li>
                             </ol>
                             <div className="sign-out" onClick={() => authDal.signOut()}>
                                 <span>Sign out</span>

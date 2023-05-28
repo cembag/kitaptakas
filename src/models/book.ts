@@ -26,7 +26,7 @@ export const BookLegibilites = [
 
 export default interface IBook {
     id: string
-    owner: string
+    shared_by: string
     type: BookType
     language: BookLanguage
     title: string

@@ -16,6 +16,7 @@ import BookCardASkeletion from "../../components/card/book/book.card.a/book.card
 import { useTypedSelector } from "../../provider/store"
 import { FilterState } from "../../context/book/book.filter"
 import bookWords from "../../context/book/book.words"
+import { useLocation } from "react-router-dom"
 
 const numberOfPageOptions: Array<[string, string]> = [
     ["0", "100"],
@@ -57,12 +58,15 @@ const questions: Array<string> = [
 
 export default function Books(): JSX.Element {
 
+    const { state } = useLocation();
     const { value, toggle } = useToggle()
     const bookDal = new BookDal()
 
+    console.log(state);
+
     const filtersInitialState: FilterState = {
         client: {
-            type: [],
+            type: state.category ? [state.category] : [],
             condition: "",
             legibility: "",
             has_missing_page: false,
@@ -70,6 +74,7 @@ export default function Books(): JSX.Element {
                 min: "",
                 max: ""
             },
+            title: "",
             for: "title"
         }
     }
@@ -87,8 +92,8 @@ export default function Books(): JSX.Element {
     const [category, setCategory] = useState<string>("")
     const [min, setMin] = useState<string>("")
     const [max, setMax] = useState<string>("")
+    const [title, setTitle] = useState<string>(state.title ? state.title : "");
 
-    const [book, setBook] = useState<string>("")
     // const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false)
 
     const { globalUser, language } = useTypedSelector(state => state)
@@ -110,6 +115,13 @@ export default function Books(): JSX.Element {
         setBookFetchingState(prev => ({ ...prev, filter: filters, startAfter: undefined, fetching: false, fetched: false}))
 
     }, [filters.client.condition, filters.client.has_missing_page, filters.client.legibility, filters.client.number_of_pages?.max, filters.client.number_of_pages?.min, filters.client.type.length])
+
+
+    useEffect(() => {
+
+        setBookFetchingState(prev => ({ ...prev, filter: filters, startAfter: undefined, fetching: true, fetched: false}))
+
+    }, [filters.client.title])
 
     return (
         <div id="books" className="page">
@@ -303,8 +315,11 @@ export default function Books(): JSX.Element {
 
                         <div className="right">
                             <div className="search-container">
-                                <InputA placeHolder="Kitap ismi" value={book} setState={setBook} type={"search"}/>
-                                <button className="search-button">Search</button>
+                                <InputA placeHolder="Kitap ismi" value={title} setState={setTitle} type={"search"}/>
+                                <button className="search-button" onClick={() => {
+                                    setFilters(prev => ({...prev, client: {...prev.client, title: title}}))
+                                    
+                                }}>Search</button>
                             </div>
                             
                             <div className="books">

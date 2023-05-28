@@ -17,7 +17,10 @@ export default class BookDal implements IBookDal {
     private limit = 10
 
     public async addBook(book: IBook): Promise<void> {
-        (await dbModel.books.add(book).then((book) => dbModel.books.doc(book.id).update({id: book.id})))
+        await dbModel.books.add(book).then(async (bookDocument) => {
+            await dbModel.books.doc(bookDocument.id).update({id: bookDocument.id})
+            await dbModel.userBooks(firebase.auth().currentUser!.uid).doc(bookDocument.id).set({...book, id: bookDocument.id})
+        })
     }
 
     public async getBooks(custom: Custom): Promise<Custom> {
@@ -84,6 +87,10 @@ export default class BookDal implements IBookDal {
         
         if(filter.client.has_missing_page && filter.client.has_missing_page) {
             query = query.where("has_missing_page", "==", filter.client.has_missing_page)
+        }
+
+        if(filter.client.title) {
+            query = dbModel.books.orderBy("created_at", "desc").where("title", "==", filter.client.title);
         }
     
         return query

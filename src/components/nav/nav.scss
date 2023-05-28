@@ -15,7 +15,7 @@
 
         .menu {
             background: var(--theme-color);
-            border: 1px solid rgb(116, 96, 175);
+            border: 1px solid rgb(94, 100, 74);
             border-radius: 7px;
             position: absolute;
             top: 45px;
@@ -30,7 +30,7 @@
                 font-size: 13px;
                 padding: 10px 15px;
                 white-space: nowrap;
-                border-bottom: 1px solid rgb(116, 96, 175);
+                border-bottom: 1px solid rgb(94, 100, 74);
 
                 b {
                     font-size: 13px;
@@ -41,7 +41,7 @@
                 display: flex;
                 flex-direction: column;
                 padding: 5px 0px;
-                border-bottom: 1px solid rgb(116, 96, 175);
+                border-bottom: 1px solid rgb(94, 100, 74);
                 
                 li {
                     padding: 4px 15px;
@@ -108,6 +108,7 @@
                 align-items: center;
                 justify-content: center;
                 position: relative;
+                cursor: pointer;
 
                 .keyboard-down {
                     width: 15px;

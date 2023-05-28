@@ -5,6 +5,8 @@ import {HiOutlineHeart} from "react-icons/hi"
 import BookImg from "../../../../assets/images/ic_book.png"
 import FavouriteDal from '../../../../dal/favourite/favourite.dal'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { setTradeModal } from '../../../../provider/modals/modals.reducer'
 
 
 type bookCardAProps = {
@@ -17,6 +19,7 @@ export default function BookCardA(bookCardAProps: bookCardAProps): JSX.Element {
     const {book, isFavourite} = bookCardAProps
     const favouriteDal = new FavouriteDal()
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const [inProcess, setInProcess] = useState<boolean>(false)
 
@@ -51,6 +54,8 @@ export default function BookCardA(bookCardAProps: bookCardAProps): JSX.Element {
                         <button className='trade-button' onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
+
+                            dispatch(setTradeModal(book.id!))
                         }}>Trade</button>
                     </div>
                 </div>

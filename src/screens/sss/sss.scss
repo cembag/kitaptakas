@@ -22,15 +22,19 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                cursor: pointer;
+
                 &:not(:last-child){
                     border-bottom: 1px solid #0001;
                 }
+
                 a{
                     color: rgb(100,100,100);   
-                &:hover{
-                    color: var(--theme-color)
                 }
-                    
+
+                &:hover{
+                    color: var(--theme-color) !important;
+                    background-color: rgba(var(--theme-color-rgb), .05) !important; 
                 }
             }
         }

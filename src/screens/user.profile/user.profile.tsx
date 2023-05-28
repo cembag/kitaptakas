@@ -1,25 +1,30 @@
 import "./user.profile.scss"
+import firebase from "firebase/app";
 import { ReactComponent as FavouriteImg } from "../../assets/images/favourite.svg"
-import { ReactComponent as BookImg } from "../../assets/images/book.svg"
+import { ReactComponent as BookImgg } from "../../assets/images/book.svg"
 import { ReactComponent as DealImg } from "../../assets/images/deal.svg"
+import { CgClose } from "react-icons/cg"
+import BookImg from "../../assets/images/ic_book.png"
 import { useCallback, useContext, useEffect, useState } from "react";
 import cities from "../../context/city/cities";
 import { RiImageAddLine, RiUserFill } from "react-icons/ri";
 import { IconType } from "react-icons";
 import { GiOpenBook } from "react-icons/gi";
-import { MdLocalOffer } from "react-icons/md";
+import { MdLocalOffer, MdOutlineClose } from "react-icons/md";
 import { HiHeart } from "react-icons/hi";
 import { FirebaseAuthContext } from "../../hooks/auth.provider";
 import bookImg from "../../assets/images/ic_book.png"
-import { TbArrowBigLeftLineFilled } from "react-icons/tb";
-import { BsCheckLg } from "react-icons/bs";
-import { MdOutlineClose } from "react-icons/md"
 import BookCardA from "../../components/card/book/book.card.a/book.card";
 import FavouriteDal, { CustomFavourite } from "../../dal/favourite/favourite.dal";
 import useToggle from "../../hooks/use.toggle";
 import BookCardASkeletion from "../../components/card/book/book.card.a/book.card.a.skeletion";
 import { useAppDispatch } from "../../provider/store";
 import { setAddBookModal } from "../../provider/modals/modals.reducer";
+import { useLocation, useNavigate } from "react-router-dom";
+import IBook from "../../models/book";
+import dbModel from "../../utils/db.model";
+import ITrade from "../../models/trade";
+import { BsCheckLg } from "react-icons/bs";
 
 
 const headers: { name: string, icon: IconType }[] = [
@@ -53,7 +58,8 @@ type UserProfile = {
 
 export default function UserProfile(): JSX.Element {
 
-    const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const { state } = useLocation();
+    const [currentIndex, setCurrentIndex] = useState<number>(state.index ? state.index : 0);
 
     return (
         <div className="page" id="profile-page">
@@ -196,7 +202,35 @@ function Profile({ isSelected }: { isSelected: boolean }): JSX.Element {
 
 function Books({ isSelected }: { isSelected: boolean }): JSX.Element {
 
+    const navigate = useNavigate();
     const dispatch = useAppDispatch()
+    const [books, setBooks] = useState<IBook[]>([]);
+
+    useEffect(() => {
+
+        setBooks([]);
+
+        dbModel.userBooks(firebase.auth().currentUser!.uid).onSnapshot((booksSnapshot) => {
+
+            booksSnapshot.docChanges().forEach(bookSnapshot => {
+                if (bookSnapshot.type === "added") {
+                    setBooks(prev => [...prev, bookSnapshot.doc.data()])
+                }
+            })
+
+            booksSnapshot.docChanges().forEach(bookSnapshot => {
+                if (bookSnapshot.type === "removed") {
+                    setBooks(prev => {
+                        const deletedIndex = prev.findIndex(book => book.id === bookSnapshot.doc.id);
+                        prev.splice(deletedIndex, 1);
+                        return [...prev]
+                    })
+                }
+            })
+        })
+
+    }, []);
+
 
     return (
         <div className="books-details details" style={{ display: isSelected ? "flex" : "none" }}>
@@ -209,11 +243,56 @@ function Books({ isSelected }: { isSelected: boolean }): JSX.Element {
                     + Add book
                 </button>
 
-                <div className="books">
-                    <div className="not-found">
-                        <BookImg className="image"/>
-                        <span>You dont have a book</span>
-                        <p>You can add book</p>
+                <div className="books-content">
+
+
+                    <div className="books-contentt">
+
+                        {
+                            books.length > 0 ? (
+                                <div className="books">
+                                    {
+                                        books.map(book => {
+                                            return (
+                                                <div id={"book" + book.id} className="book-card" onClick={() => navigate("/book/" + book.id)}>
+                                                    <a className="book-card-link">
+                                                        <div className="book-card-container"  >
+                                                            <div className="remove" onClick={async (e) => {
+                                                                e.stopPropagation();
+                                                                e.preventDefault();
+                                                                await dbModel.books.doc(book.id).delete();
+                                                                await dbModel.userBooks(firebase.auth().currentUser!.uid).doc(book.id).delete();
+                                                            }}>
+                                                                <CgClose className="icon" />
+                                                            </div>
+                                                            <div className='image-container'>
+                                                                {book.images && book.images!.length > 0 ? <img src={book.images![0]} alt="image" /> : <img src={BookImg}></img>}
+                                                            </div>
+                                                            <div className='attributes'>
+                                                                <span>{book.title}</span>
+                                                                <span>{book.author}</span>
+                                                                <div style={{ flex: 1 }}></div>
+                                                                <button className='trade-button' onClick={(e) => {
+                                                                    e.preventDefault()
+                                                                    e.stopPropagation()
+                                                                }}>Trade</button>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            )
+                                        })}
+                                </div>
+                            ) : (
+                                <div className="not-found">
+                                    <BookImgg className="image" />
+                                    <span>You dont have a book</span>
+                                    <p>You can add book</p>
+                                </div>
+                            )
+                        }
+
+
                     </div>
                 </div>
             </div>
@@ -224,6 +303,30 @@ function Books({ isSelected }: { isSelected: boolean }): JSX.Element {
 function Offers({ isSelected }: { isSelected: boolean }): JSX.Element {
 
     const [index, setIndex] = useState<number>(0)
+    const [trades, setTrades] = useState<{
+        gelen: ITrade[],
+        giden: ITrade[]
+    }>({
+        gelen: [],
+        giden: []
+    });
+
+    useEffect(() => {
+
+        setTrades({
+            gelen: [],
+            giden: [],
+        });
+
+        dbModel.userTrades(firebase.auth().currentUser!.uid).get().then((userTrades) => userTrades.docs.forEach(trade => {
+            if (trade.data().gonderen_kisi === firebase.auth().currentUser!.uid) {
+                setTrades(prev => ({ ...prev, giden: [...prev.giden, trade.data()] }))
+            } else {
+                setTrades(prev => ({ ...prev, gelen: [...prev.gelen, trade.data()] }))
+            }
+        }))
+
+    }, []);
 
     return (
         <div className="offers-details details" style={{ display: isSelected ? "flex" : "none" }}>
@@ -245,103 +348,58 @@ function Offers({ isSelected }: { isSelected: boolean }): JSX.Element {
                 {
                     index === 0 && (
                         <div className="received-offers offers">
-                            {/* <div className="offer">
-                                <div className="books">
-                                    <article>
-                                        <h4>Alacağın kitap</h4>
-                                        <figure className="book">
-                                            <img src="https://kbimages1-a.akamaihd.net/Images/fac26a92-7e60-4d99-8483-760776647e3a/255/400/False/image.jpg" alt="" />
-                                        </figure>
-                                        <div className="book-attributes">
-                                            <span className="title">Bir kitap</span>
-                                            <span className="author">Bir yazar</span>
-                                        </div>
-                                    </article>
+                            {
+                                trades.gelen.length > 0 ? (
+                                    trades.gelen.map(trade => {
 
-                                    <article>
-                                        <h4>Vereceğin kitap</h4>
-                                        <figure className="book">
-                                            <img src="https://i.dr.com.tr/cache/500x400-0/originals/0000000636324-1.jpg" alt="" />
-                                            <div className="book-attributes">
-                                                <span className="title">Bir kitap</span>
-                                                <span className="author">Bir yazar</span>
+                                        return (
+                                            <div className="offer">
+                                                <div className="books">
+                                                    <article>
+                                                        <h4>Alacağın kitap</h4>
+                                                        <div className="book-a">
+                                                            <figure className="book">
+                                                                <img src={trade.istenilen_kitap.img} alt="" />
+                                                            </figure>
+                                                            <div className="book-attributes">
+                                                                <span className="title">{trade.istenilen_kitap.title}</span>
+                                                                <span className="author">{trade.istenilen_kitap.author}</span>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+
+                                                    <article>
+                                                        <h4>Vereceğin kitap</h4>
+                                                        <div className="book-a">
+                                                            <figure className="book">
+                                                                <img src={trade.teklif_edilen_kitap.img} alt="" />
+                                                            </figure>
+                                                            <div className="book-attributes">
+                                                                <span className="title">{trade.teklif_edilen_kitap.title}</span>
+                                                                <span className="author">{trade.teklif_edilen_kitap.author}</span>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+
+                                                </div>
+                                                <div className="actions">
+                                                    <button className="accept">
+                                                        <BsCheckLg className="icon" />
+                                                    </button>
+                                                    <button className="deny">
+                                                        <MdOutlineClose className="icon" />
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </figure>
-                                    </article>
-
-                                </div>
-                                <div className="actions">
-                                    <button className="accept">
-                                        <BsCheckLg className="icon" />
-                                    </button>
-                                    <button className="deny">
-                                        <MdOutlineClose className="icon" />
-                                    </button>
-                                </div>
-                            </div> */}
-                            {/* <div className="offer">
-                                <div className="books">
-                                    <figure className="book">
-                                        <img src="https://kbimages1-a.akamaihd.net/Images/fac26a92-7e60-4d99-8483-760776647e3a/255/400/False/image.jpg" alt="" />
-                                        <div className="book-attribute">
-                                            <span className="title">Bir kitap</span>
-                                            <span className="author">Bir yazar</span>
-                                        </div>
-                                    </figure>
-
-                                    <TbArrowBigLeftLineFilled className="icon" />
-
-                                    <figure className="book">
-                                        <img src="https://i.dr.com.tr/cache/500x400-0/originals/0000000636324-1.jpg" alt="" />
-                                        <div className="book-attribute">
-                                            <span className="title">Bir kitap</span>
-                                            <span className="author">Bir yazar</span>
-                                        </div>
-                                    </figure>
-                                </div>
-                                <div className="actions">
-                                    <button className="accept">
-                                        <BsCheckLg className="icon" />
-                                    </button>
-                                    <button className="deny">
-                                        <MdOutlineClose className="icon" />
-                                    </button>
-                                </div>
-                            </div> */}
-                            {/* <div className="offer">
-                                <div className="books">
-                                    <figure className="book">
-                                        <img src="https://kbimages1-a.akamaihd.net/Images/fac26a92-7e60-4d99-8483-760776647e3a/255/400/False/image.jpg" alt="" />
-                                        <div className="book-attribute">
-                                            <span className="title">Bir kitap</span>
-                                            <span className="author">Bir yazar</span>
-                                        </div>
-                                    </figure>
-
-                                    <TbArrowBigLeftLineFilled className="icon" />
-
-                                    <figure className="book">
-                                        <img src="https://i.dr.com.tr/cache/500x400-0/originals/0000000636324-1.jpg" alt="" />
-                                        <div className="book-attribute">
-                                            <span className="title">Bir kitap</span>
-                                            <span className="author">Bir yazar</span>
-                                        </div>
-                                    </figure>
-                                </div>
-                                <div className="actions">
-                                    <button className="accept">
-                                        <BsCheckLg className="icon" />
-                                    </button>
-                                    <button className="deny">
-                                        <MdOutlineClose className="icon" />
-                                    </button>
-                                </div>
-                            </div> */}
-
-                            <div className="not-found">
-                                <DealImg className="image"/>
-                                <span>You dont have an offer.</span>
-                            </div>
+                                        )
+                                    })
+                                ) : (
+                                    <div className="not-found">
+                                        <DealImg className="image" />
+                                        <span>You dont have an offer.</span>
+                                    </div>
+                                )
+                            }
                         </div>
                     )
                 }
@@ -349,10 +407,58 @@ function Offers({ isSelected }: { isSelected: boolean }): JSX.Element {
                 {
                     index === 1 && (
                         <div className="sended-offers offers">
-                            <div className="not-found">
-                                <DealImg className="image"/>
-                                <span>You dont have an offer.</span>
-                            </div>
+                            {
+                                trades.giden.length > 0 ? (
+                                    trades.giden.map(trade => {
+
+                                        return (
+                                            <div className="offer">
+                                                <div className="books">
+                                                    <article>
+                                                        <h4>Alacağın kitap</h4>
+                                                        <div className="book-a">
+                                                            <figure className="book">
+                                                                <img src={trade.istenilen_kitap.img} alt="" />
+                                                            </figure>
+                                                            <div className="book-attributes">
+                                                                <span className="title">{trade.istenilen_kitap.title}</span>
+                                                                <span className="author">{trade.istenilen_kitap.author}</span>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+
+                                                    <article>
+                                                        <h4>Vereceğin kitap</h4>
+                                                        <div className="book-a">
+                                                            <figure className="book">
+                                                                <img src={trade.teklif_edilen_kitap.img} alt="" />
+                                                            </figure>
+                                                            <div className="book-attributes">
+                                                                <span className="title">{trade.teklif_edilen_kitap.title}</span>
+                                                                <span className="author">{trade.teklif_edilen_kitap.author}</span>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+
+                                                </div>
+                                                <div className="actions">
+                                                    <button className="accept">
+                                                        <BsCheckLg className="icon" />
+                                                    </button>
+                                                    <button className="deny">
+                                                        <MdOutlineClose className="icon" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                ) : (
+                                    <div className="not-found">
+                                        <DealImg className="image" />
+                                        <span>You dont have an offer.</span>
+                                    </div>
+                                )
+                            }
                         </div>
                     )
                 }
