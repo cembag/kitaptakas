@@ -318,14 +318,33 @@ function Offers({ isSelected }: { isSelected: boolean }): JSX.Element {
             giden: [],
         });
 
-        dbModel.userTrades(firebase.auth().currentUser!.uid).get().then((userTrades) => userTrades.docs.forEach(trade => {
-            if (trade.data().gonderen_kisi === firebase.auth().currentUser!.uid) {
-                setTrades(prev => ({ ...prev, giden: [...prev.giden, trade.data()] }))
-            } else {
-                setTrades(prev => ({ ...prev, gelen: [...prev.gelen, trade.data()] }))
-            }
-        }))
+        dbModel.userTrades(firebase.auth().currentUser!.uid).onSnapshot((snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if(change.type === "added") {
+                    if (change.doc.data().gonderen_kisi === firebase.auth().currentUser!.uid) {
+                        setTrades(prev => ({ ...prev, giden: [...prev.giden, change.doc.data()]}))
+                    } else {
+                        setTrades(prev => ({ ...prev, gelen: [...prev.gelen, change.doc.data()]}))
+                    }
+                }
 
+                if(change.type === "removed") {
+                    if (change.doc.data().gonderen_kisi === firebase.auth().currentUser!.uid) {
+                        setTrades(prev => {
+                            const removedIndex = prev.giden.findIndex(el => el.id === change.doc.id);
+                            prev.giden.splice(removedIndex, 1);
+                            return {giden: [...prev.giden], gelen: [...prev.gelen]}
+                        })
+                    } else {
+                        setTrades(prev => {
+                            const removedIndex = prev.gelen.findIndex(el => el.id === change.doc.id);
+                            prev.gelen.splice(removedIndex, 1);
+                            return {giden: [...prev.giden], gelen: [...prev.gelen]}
+                        })
+                    }
+                }
+            })
+        })
     }, []);
 
     return (
@@ -383,10 +402,18 @@ function Offers({ isSelected }: { isSelected: boolean }): JSX.Element {
 
                                                 </div>
                                                 <div className="actions">
-                                                    <button className="accept">
+                                                    <button className="accept" onClick={async () => {
+                                                        await dbModel.trades.doc(trade.id).delete();
+                                                        await dbModel.userTrades(trade.gonderen_kisi).doc(trade.id).delete();
+                                                        await dbModel.userTrades(trade.alan_kisi).doc(trade.id).delete();
+                                                    }}>
                                                         <BsCheckLg className="icon" />
                                                     </button>
-                                                    <button className="deny">
+                                                    <button className="deny" onClick={async () => {
+                                                        await dbModel.trades.doc(trade.id).delete();
+                                                        await dbModel.userTrades(trade.gonderen_kisi).doc(trade.id).delete();
+                                                        await dbModel.userTrades(trade.alan_kisi).doc(trade.id).delete();
+                                                    }}>
                                                         <MdOutlineClose className="icon" />
                                                     </button>
                                                 </div>
@@ -442,10 +469,11 @@ function Offers({ isSelected }: { isSelected: boolean }): JSX.Element {
 
                                                 </div>
                                                 <div className="actions">
-                                                    <button className="accept">
-                                                        <BsCheckLg className="icon" />
-                                                    </button>
-                                                    <button className="deny">
+                                                    <button className="deny" onClick={async () => {
+                                                        await dbModel.trades.doc(trade.id).delete();
+                                                        await dbModel.userTrades(trade.gonderen_kisi).doc(trade.id).delete();
+                                                        await dbModel.userTrades(trade.alan_kisi).doc(trade.id).delete();
+                                                    }}>
                                                         <MdOutlineClose className="icon" />
                                                     </button>
                                                 </div>
